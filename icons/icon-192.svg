@@ -1,23 +1,55 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192" role="img" aria-label="ScentCafe logo">
+<svg width="192" height="192" viewBox="0 0 192 192" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
-      <stop offset="0%" stop-color="#201711"/>
-      <stop offset="100%" stop-color="#3b2617"/>
+      <stop offset="0%" stop-color="#1b120d"/>
+      <stop offset="100%" stop-color="#2b1c16"/>
     </linearGradient>
     <linearGradient id="gold" x1="0" x2="1" y1="0" y2="1">
-      <stop offset="0%" stop-color="#f2d39d"/>
-      <stop offset="100%" stop-color="#c98d3f"/>
+      <stop offset="0%" stop-color="#f7d89d"/>
+      <stop offset="55%" stop-color="#d4a852"/>
+      <stop offset="100%" stop-color="#b67b2f"/>
+    </linearGradient>
+    <linearGradient id="teal" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#4dd5dc"/>
+      <stop offset="50%" stop-color="#0ea4b4"/>
+      <stop offset="100%" stop-color="#0a6875"/>
     </linearGradient>
   </defs>
+
   <rect width="192" height="192" rx="42" fill="url(#bg)"/>
-  <g transform="translate(0 8)">
-    <path d="M62 66h68c12 0 22 10 22 22v18c0 34-26 57-56 57S46 140 46 106V88c0-12 10-22 22-22h-6z" fill="none" stroke="url(#gold)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="M60 68h72c7 0 12 5 12 12v10H48V80c0-7 5-12 12-12z" fill="url(#gold)" opacity="0.9"/>
-    <path d="M66 52c0-17 14-30 31-30s31 13 31 30" fill="none" stroke="#f2d39d" stroke-width="8" stroke-linecap="round"/>
-    <path d="M80 82c3 8 10 14 18 14s15-6 18-14" fill="none" stroke="#201711" stroke-width="5" stroke-linecap="round"/>
-    <path d="M52 101c10 6 22 9 34 9 14 0 28-4 38-11" fill="none" stroke="#201711" stroke-width="5" stroke-linecap="round" opacity="0.7"/>
-    <circle cx="48" cy="44" r="5" fill="#f7d48d"/>
-    <circle cx="144" cy="44" r="5" fill="#f7d48d"/>
-    <circle cx="120" cy="30" r="4" fill="#f7d48d"/>
+
+  <g transform="translate(112 10)">
+    <path d="M24 5 C35 -3, 43 10, 43 23 C43 38, 32 51, 18 58 C13 60, 9 59, 6 56 C3 53, 2 48, 3 44 C6 29, 11 18, 23 12 C13 9, 6 2, 7 -6 C8 -11, 14 -15, 20 -12 C24 -9, 28 -6, 24 5 Z" fill="url(#gold)"/>
+    <circle cx="27" cy="19" r="9" fill="url(#gold)" opacity="0.9"/>
+    <path d="M25 22 C38 8, 48 17, 48 31 C48 48, 36 58, 19 62" fill="none" stroke="url(#gold)" stroke-width="4" stroke-linecap="round"/>
+    <path d="M18 44 C28 33, 39 28, 53 32" fill="none" stroke="url(#gold)" stroke-width="3.2" stroke-linecap="round"/>
+  </g>
+
+  <g transform="translate(38 48)">
+    <path d="M41 0 L64 0 L69 22 L60 127 C59 143, 46 154, 28 154 C10 154, 0 143, -2 127 L-11 22 Z" fill="url(#teal)" stroke="#d4af5b" stroke-width="2.5"/>
+    <path d="M34 22 H71 L68 34 H37 Z" fill="#0d8c9d" opacity="0.7"/>
+    <path d="M31 44 H75 L70 128 H36 Z" fill="#0c8392" opacity="0.76"/>
+    <path d="M30 47 H75" stroke="#0a5968" stroke-width="2" stroke-linecap="round"/>
+    <path d="M31 0 L52 -12 L72 0" fill="none" stroke="url(#gold)" stroke-width="3.2" stroke-linecap="round"/>
+    <path d="M36 0 L43 17 L51 0" fill="url(#gold)" opacity="0.9"/>
+    <path d="M28 132 L76 132" stroke="#d4af5b" stroke-width="3" stroke-linecap="round"/>
+  </g>
+
+  <g transform="translate(96 112)">
+    <circle cx="24" cy="28" r="6" fill="url(#gold)"/>
+    <path d="M13 24 C18 17, 24 14, 31 14 C37 14, 42 18, 46 24" fill="none" stroke="url(#gold)" stroke-width="4" stroke-linecap="round"/>
+    <path d="M4 34 C11 26, 19 22, 26 22 C33 22, 40 26, 47 34" fill="none" stroke="url(#gold)" stroke-width="4" stroke-linecap="round"/>
+    <path d="M0 46 C12 34, 22 30, 31 30 C39 30, 49 34, 60 46" fill="none" stroke="url(#gold)" stroke-width="4" stroke-linecap="round"/>
+  </g>
+
+  <g fill="url(#gold)">
+    <path d="M23 150 C31 141, 42 138, 53 145 C43 149, 31 161, 23 171 C18 163, 19 156, 23 150 Z"/>
+    <path d="M145 152 C152 142, 164 140, 175 147 C165 151, 154 164, 145 174 C140 166, 141 158, 145 152 Z"/>
+  </g>
+
+  <g fill="url(#gold)">
+    <path d="M118 22 L121 29 L128 32 L121 35 L118 42 L115 35 L108 32 L115 29 Z"/>
+    <path d="M149 48 L152 55 L159 58 L152 61 L149 68 L146 61 L139 58 L146 55 Z"/>
+    <path d="M28 58 L31 65 L38 68 L31 71 L28 78 L25 71 L18 68 L25 65 Z"/>
   </g>
 </svg>

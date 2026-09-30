@@ -1,23 +1,55 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" role="img" aria-label="ScentCafe logo">
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
   <defs>
     <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
-      <stop offset="0%" stop-color="#201711"/>
-      <stop offset="100%" stop-color="#3b2617"/>
+      <stop offset="0%" stop-color="#1b120d"/>
+      <stop offset="100%" stop-color="#2b1c16"/>
     </linearGradient>
     <linearGradient id="gold" x1="0" x2="1" y1="0" y2="1">
-      <stop offset="0%" stop-color="#f2d39d"/>
-      <stop offset="100%" stop-color="#c98d3f"/>
+      <stop offset="0%" stop-color="#f7d89d"/>
+      <stop offset="55%" stop-color="#d4a852"/>
+      <stop offset="100%" stop-color="#b67b2f"/>
+    </linearGradient>
+    <linearGradient id="teal" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#4dd5dc"/>
+      <stop offset="50%" stop-color="#0ea4b4"/>
+      <stop offset="100%" stop-color="#0a6875"/>
     </linearGradient>
   </defs>
-  <rect width="512" height="512" rx="116" fill="url(#bg)"/>
-  <g transform="translate(0 16)">
-    <path d="M164 176h184c32 0 58 26 58 58v50c0 92-69 155-150 155s-150-63-150-155v-50c0-32 26-58 58-58z" fill="none" stroke="url(#gold)" stroke-width="22" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="M168 180h176c19 0 34 15 34 34v26H134v-26c0-19 15-34 34-34z" fill="url(#gold)" opacity="0.95"/>
-    <path d="M170 138c0-44 34-78 78-78s78 34 78 78" fill="none" stroke="#f2d39d" stroke-width="22" stroke-linecap="round"/>
-    <path d="M208 214c10 20 26 32 48 32s38-12 48-32" fill="none" stroke="#201711" stroke-width="12" stroke-linecap="round"/>
-    <path d="M134 276c28 16 60 24 96 24 38 0 75-11 104-30" fill="none" stroke="#201711" stroke-width="14" stroke-linecap="round" opacity="0.75"/>
-    <circle cx="132" cy="110" r="12" fill="#f7d48d"/>
-    <circle cx="382" cy="110" r="12" fill="#f7d48d"/>
-    <circle cx="316" cy="76" r="10" fill="#f7d48d"/>
+
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+
+  <g transform="translate(304 30)">
+    <path d="M58 10 C81 -4, 102 20, 102 52 C102 87, 80 117, 48 132 C37 137, 24 134, 15 128 C8 122, 4 114, 5 104 C10 74, 21 56, 48 40 C31 36, 16 21, 18 -1 C20 -10, 30 -18, 43 -15 C50 -13, 56 -9, 58 10 Z" fill="url(#gold)"/>
+    <circle cx="61" cy="42" r="20" fill="url(#gold)" opacity="0.9"/>
+    <path d="M59 51 C82 31, 102 37, 104 70 C104 106, 82 130, 50 142" fill="none" stroke="url(#gold)" stroke-width="10" stroke-linecap="round"/>
+    <path d="M42 112 C67 85, 95 79, 130 88" fill="none" stroke="url(#gold)" stroke-width="8" stroke-linecap="round"/>
+  </g>
+
+  <g transform="translate(100 124)">
+    <path d="M112 0 L174 0 L189 62 L166 342 C163 402, 126 442, 82 442 C38 442, 8 402, 0 342 L-20 62 Z" fill="url(#teal)" stroke="#d4af5b" stroke-width="7"/>
+    <path d="M90 60 H196 L190 92 H96 Z" fill="#0d8c9d" opacity="0.7"/>
+    <path d="M82 110 H200 L190 342 H92 Z" fill="#0c8392" opacity="0.76"/>
+    <path d="M88 116 H194" stroke="#0a5968" stroke-width="5" stroke-linecap="round"/>
+    <path d="M86 0 L130 -28 L174 0" fill="none" stroke="url(#gold)" stroke-width="8" stroke-linecap="round"/>
+    <path d="M92 0 L114 42 L138 0" fill="url(#gold)" opacity="0.9"/>
+    <path d="M80 366 L202 366" stroke="#d4af5b" stroke-width="10" stroke-linecap="round"/>
+  </g>
+
+  <g transform="translate(270 250)">
+    <circle cx="68" cy="72" r="16" fill="url(#gold)"/>
+    <path d="M28 64 C41 44, 59 34, 80 34 C98 34, 115 42, 132 64" fill="none" stroke="url(#gold)" stroke-width="10" stroke-linecap="round"/>
+    <path d="M8 86 C31 61, 54 52, 77 52 C100 52, 124 61, 145 86" fill="none" stroke="url(#gold)" stroke-width="10" stroke-linecap="round"/>
+    <path d="M0 110 C27 82, 53 72, 81 72 C108 72, 136 82, 162 110" fill="none" stroke="url(#gold)" stroke-width="10" stroke-linecap="round"/>
+  </g>
+
+  <g fill="url(#gold)">
+    <path d="M56 394 C72 374, 95 370, 120 382 C97 389, 73 414, 56 437 C46 425, 47 406, 56 394 Z"/>
+    <path d="M386 396 C401 373, 425 370, 453 386 C431 392, 406 417, 387 441 C376 425, 379 410, 386 396 Z"/>
+  </g>
+
+  <g fill="url(#gold)">
+    <path d="M318 48 L324 62 L338 68 L324 74 L318 88 L312 74 L298 68 L312 62 Z"/>
+    <path d="M382 112 L388 126 L402 132 L388 138 L382 152 L376 138 L362 132 L376 126 Z"/>
+    <path d="M70 122 L76 136 L90 142 L76 148 L70 162 L64 148 L50 142 L64 136 Z"/>
   </g>
 </svg>
