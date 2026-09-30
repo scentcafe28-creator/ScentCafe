@@ -1,72 +1,52 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ScentCafe App</title><style>
-:root{--ink:#19130f;--cream:#f7f2ec;--card:#fff;--muted:#777;--line:#eadfd4;--accent:#9a6a3f}*{box-sizing:border-box}body{margin:0;background:#e9e4df;font-family:Inter,Arial,sans-serif;color:var(--ink)}button{font:inherit}.phone{width:min(100%,430px);min-height:100vh;margin:auto;background:var(--cream);position:relative;padding-bottom:78px}.top{background:var(--ink);color:#fff;padding:24px 20px 22px;border-radius:0 0 28px 28px}.brand{font-size:28px;font-weight:800}.tag{font-size:13px;opacity:.72;margin-top:4px}.search{margin-top:18px;background:#fff;color:#777;padding:13px 14px;border-radius:14px}.content{padding:18px}.section{display:flex;justify-content:space-between;align-items:center;margin:14px 0 11px}.section h2{font-size:18px;margin:0}.small{font-size:12px;color:var(--accent)}.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 5px 15px #00000008}.card .ico{font-size:27px}.card b{display:block;font-size:14px;margin-top:9px}.card p{font-size:11px;line-height:1.45;color:var(--muted);margin:6px 0 0}.ai{margin-top:14px;background:var(--ink);color:#fff;border-radius:20px;padding:17px;display:flex;gap:13px;align-items:center}.ai .robot{font-size:36px}.ai p{margin:5px 0 9px;font-size:11px;opacity:.72}.btn{border:0;background:#fff;color:var(--ink);padding:9px 13px;border-radius:10px;font-weight:700;font-size:12px}.wide{width:100%;text-align:left;margin-top:10px}.pills{display:flex;gap:9px;overflow:auto;padding-bottom:3px}.pill{white-space:nowrap;background:#fff;border:1px solid var(--line);padding:11px 13px;border-radius:20px;font-size:12px}.screen{display:none}.screen.active{display:block}.back{border:0;background:transparent;padding:0;font-size:13px;color:var(--accent);margin-bottom:12px}.service{display:flex;gap:12px;align-items:center}.service .ico{font-size:28px}.item{margin-top:10px;padding:15px;background:#fff;border:1px solid var(--line);border-radius:16px}.item b{font-size:14px}.item p{font-size:11px;color:var(--muted);line-height:1.45}.bottom{position:fixed;bottom:0;width:min(100%,430px);background:#fff;border-top:1px solid var(--line);display:flex;justify-content:space-around;padding:9px 4px;z-index:10}.bottom button{background:none;border:0;color:#777;font-size:10px}.bottom span{display:block;font-size:19px;margin-bottom:3px}.toast{position:fixed;left:50%;bottom:82px;transform:translateX(-50%);background:var(--ink);color:#fff;padding:11px 15px;border-radius:12px;font-size:12px;display:none;z-index:20;white-space:nowrap}
-</style>
+:root{--ink:#19130f;--cream:#f7f2ec;--card:#fff;--muted:#777;--line:#eadfd4;--accent:#9a6a3f}*{box-sizing:border-box}body{margin:0;background:#e9e4df;font-family:Inter,Arial,sans-serif;color:var(--ink)}.phone{max-width:420px;margin:0 auto;min-height:100vh;background:#fff;position:relative}.top{padding:18px 18px 10px;background:linear-gradient(180deg,#1a130f,#2b1f18);color:#fff}.brand{font-size:26px;font-weight:800;letter-spacing:.2px}.tag{font-size:12px;color:#f0dcc7;margin-top:5px}.search{margin-top:16px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.15);padding:12px 14px;border-radius:14px;font-size:14px;color:#f5e9de}.content{padding:18px 18px 90px}.screen{display:none}.screen.active{display:block}.section{display:flex;align-items:center;justify-content:space-between;margin:10px 0 12px}.section h2{margin:0;font-size:16px}.small{font-size:12px;color:var(--muted)}.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px 12px;box-shadow:0 4px 12px rgba(0,0,0,.04)}.ico{font-size:28px;margin-bottom:10px}.card b{display:block;font-size:14px;margin-top:4px}.card p{margin:6px 0 0;font-size:11px;color:var(--muted);line-height:1.35}.ai{display:flex;align-items:center;gap:12px;background:#f5eee7;border:1px solid var(--line);padding:14px 12px;border-radius:18px;margin:18px 0}.robot{font-size:28px;width:40px;height:40px;display:grid;place-items:center;border-radius:12px;background:#fff}.ai b{display:block}.ai p{margin:3px 0 0;color:var(--muted);font-size:11px}.btn,.back,.pill,.item,.bottom button{font-family:inherit}.btn{margin-top:10px;display:inline-block;padding:8px 10px;border:0;background:var(--accent);color:#fff;border-radius:10px;font-size:11px;font-weight:700}.pills{display:flex;flex-wrap:wrap;gap:8px}.pill{padding:8px 10px;background:#f4ecdf;border-radius:999px;font-size:11px;border:1px solid var(--line)}.item{background:#fff;border:1px solid var(--line);padding:14px 12px;border-radius:15px;margin-bottom:10px}.item b{font-size:14px}.item p{margin:6px 0 0;color:var(--muted);font-size:11px;line-height:1.45}.back{padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:#fff;font-size:12px}.bottom{position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:min(420px,100%);display:grid;grid-template-columns:repeat(4,1fr);background:#fff;border-top:1px solid var(--line);padding:8px 8px 14px;box-shadow:0 -8px 20px rgba(0,0,0,.05)}.bottom button{background:transparent;border:0;color:var(--muted);padding:8px 0;font-size:11px;display:flex;flex-direction:column;align-items:center;gap:4px}.bottom button span{font-size:18px}.install-card{display:none;margin:14px 0 0;background:#9a6a3f;color:#fff;border-radius:18px;padding:14px 15px;box-shadow:0 5px 15px rgba(0,0,0,.08)}.install-card.show{display:flex;align-items:center;gap:12px}.install-card .install-text{flex:1}.install-card b{font-size:13px}.install-card p{font-size:10px;opacity:.85;margin:4px 0 0}.install-card button{border:0;border-radius:10px;padding:9px 11px;font-weight:700;font-size:11px;background:#fff;color:#19130f}.toast{position:fixed;bottom:90px;left:50%;transform:translateX(-50%);background:rgba(25,19,15,.92);color:#fff;padding:10px 14px;border-radius:999px;font-size:11px;display:none}.toast.show{display:block}</style>
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#19130f">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<link rel="apple-touch-icon" href="icons/icon-192.png">
-
-<style>
-.install-card{display:none;margin:14px 0 0;background:#9a6a3f;color:#fff;border-radius:18px;padding:14px 15px;box-shadow:0 5px 15px #00000012}
-.install-card.show{display:flex;align-items:center;gap:12px}
-.install-card .install-text{flex:1}
-.install-card b{font-size:13px}
-.install-card p{font-size:10px;opacity:.85;margin:4px 0 0}
-.install-card button{border:0;border-radius:10px;padding:9px 11px;font-weight:700;font-size:11px;background:#fff;color:#19130f}
-</style>
+<link rel="icon" type="image/svg+xml" sizes="192x192" href="icons/icon-192.svg">
+<link rel="apple-touch-icon" href="icons/icon-192.svg">
 </head><body><div class="phone">
 <header class="top"><div class="brand">ScentCafe</div><div class="tag">Reliable support at your fingertips</div><div class="search">🔎 &nbsp; What do you need help with?</div></header>
 <main class="content">
-<section id="home" class="screen active"><div class="section"><h2>Quick Services</h2><span class="small">View all</span></div><div class="grid">
-<div class="card" onclick="openService('Government Services','🏛️',['SARS assistance','Home Affairs assistance','SRD assistance','NATIS assistance','IEC assistance'])"><div class="ico">🏛️</div><b>Government Services</b><p>SARS, Home Affairs, SRD, NATIS & IEC</p></div>
-<div class="card" onclick="openService('Jobs & CVs','💼',['Job portal assistance','Professional CVs','CV updates','Job search support'])"><div class="ico">💼</div><b>Jobs & CVs</b><p>Job portals and professional CV assistance</p></div>
-<div class="card" onclick="openService('Education','🎓',['School admissions','University applications','NSFAS information','Application support'])"><div class="ico">🎓</div><b>Education</b><p>School, university and application support</p></div>
-<div class="card" onclick="openService('Applications','📄',['Online applications','Document assistance','Email assistance','Application tracking'])"><div class="ico">📄</div><b>Applications</b><p>Application and document support</p></div></div>
-
-<div id="installCard" class="install-card">
-  <div style="font-size:25px">📱</div>
-  <div class="install-text"><b>Install ScentCafe</b><p>Add ScentCafe to your Android home screen.</p></div>
-  <button id="installBtn">Install</button>
-</div>
-<div class="ai"><div class="robot">🤖</div><div><b>ScentCafe AI Assistant</b><p>Tell me what you need help with.</p><button class="btn" onclick="toast('AI Assistant is ready for chatbot integration.')">Chat with AI</button></div></div>
+<section id="home" class="screen active"><div class="section"><h2>Quick Services</h2><span class="small">View all</span></div><div class="grid"><div class="card" onclick="openService('Government Services','🏛️',['SARS assistance','Home Affairs assistance','SRD assistance','NATIS assistance','IEC assistance'])"><div class="ico">🏛️</div><b>Government</b><p>Help with official services and documents.</p></div><div class="card" onclick="openService('Jobs & CVs','💼',['Job portal assistance','Professional CVs','CV updates','Job search support'])"><div class="ico">💼</div><b>Jobs & CVs</b><p>Career support and opportunities.</p></div><div class="card" onclick="openService('Education','🎓',['School admissions','University applications','NSFAS information','Application support'])"><div class="ico">🎓</div><b>Education</b><p>Admissions and study guidance.</p></div><div class="card" onclick="openService('Applications','📄',['Online applications','Document assistance','Email assistance','Application tracking'])"><div class="ico">📄</div><b>Applications</b><p>Fast help with forms and paperwork.</p></div></div>
+<div id="installCard" class="install-card"><div style="font-size:25px">📱</div><div class="install-text"><b>Install ScentCafe</b><p>Add ScentCafe to your Android home screen.</p></div><button id="installBtn">Install</button></div>
+<div class="ai"><div class="robot">🤖</div><div><b>ScentCafe AI Assistant</b><p>Tell me what you need help with.</p><button class="btn" onclick="toast('AI Assistant is ready for chatbot integration.')">Try AI</button></div></div>
 <div class="section"><h2>Popular</h2></div><div class="pills"><div class="pill">📱 SRD</div><div class="pill">🪪 Home Affairs</div><div class="pill">📚 School Applications</div><div class="pill">💼 Jobs</div></div>
-<div class="section"><h2>ScentCafe WiFi</h2><span class="small">Open</span></div><div class="card" onclick="openWifi()"><div class="service"><div class="ico">📶</div><div><b>Connect to ScentCafe WiFi</b><p>Buy a voucher, connect and manage your access.</p></div></div></div></section>
-<section id="service" class="screen"><button class="back" onclick="show('home')">← Back</button><div class="section"><h2 id="serviceTitle"></h2></div><div id="serviceItems"></div><button class="btn wide" onclick="toast('Request received. WhatsApp support can be connected here.')">💬 Request assistance</button></section>
-<section id="wifi" class="screen"><button class="back" onclick="show('home')">← Back</button><div class="section"><h2>📶 ScentCafe WiFi</h2></div><div class="item"><b>Buy a WiFi voucher</b><p>Select a package and receive your access code.</p><button class="btn" onclick="toast('Voucher purchase screen ready.')">Buy voucher</button></div><div class="item"><b>Connect</b><p>Enter your voucher code to connect.</p><button class="btn" onclick="toast('Voucher login screen ready.')">Enter voucher</button></div></section>
-<section id="account" class="screen"><div class="section"><h2>👤 My Account</h2></div><div class="item"><b>Welcome to ScentCafe</b><p>Your future dashboard can show applications, requests, WiFi vouchers and support history.</p></div><button class="btn wide" onclick="toast('Account registration can be connected here.')">Create account</button></section>
-</main><nav class="bottom"><button onclick="show('home')"><span>🏠</span>Home</button><button onclick="openService('All Services','📋',['Government Services','Jobs & CVs','Education','Applications'])"><span>📋</span>Services</button><button onclick="toast('AI Assistant is ready for chatbot integration.')"><span>🤖</span>AI Help</button><button onclick="openWifi()"><span>📶</span>WiFi</button><button onclick="show('account')"><span>👤</span>Account</button></nav><div id="toast" class="toast"></div></div>
-<script>function show(id){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');scrollTo(0,0)}function openService(title,icon,items){document.getElementById('serviceTitle').textContent=icon+' '+title;document.getElementById('serviceItems').innerHTML=items.map(x=>`<div class="item"><b>${x}</b><p>Get assistance through ScentCafe.</p></div>`).join('');show('service')}function openWifi(){show('wifi')}function toast(msg){let t=document.getElementById('toast');t.textContent=msg;t.style.display='block';clearTimeout(window.tt);window.tt=setTimeout(()=>t.style.display='none',2500)}</script>
-<script>
+<div class="section"><h2>ScentCafe WiFi</h2><span class="small">Open</span></div><div class="card" onclick="openWifi()"><div class="service"><div class="ico">📶</div><div><b>Connect to ScentCafe WiFi</b><p>Access internet vouchers and support.</p></div></div></div>
+</section>
+<section id="service" class="screen"><button class="back" onclick="show('home')">← Back</button><div class="section"><h2 id="serviceTitle"></h2></div><div id="serviceItems"></div></section>
+<section id="wifi" class="screen"><button class="back" onclick="show('home')">← Back</button><div class="section"><h2>📶 ScentCafe WiFi</h2></div><div class="item"><b>Buy a WiFi voucher</b><p>Get support for top-ups and connectivity.</p></div><div class="item"><b>Report a connection issue</b><p>Let us help troubleshoot your WiFi.</p></div><div class="item"><b>Check account balance</b><p>Use your voucher number and account details.</p></div></section>
+<section id="account" class="screen"><div class="section"><h2>👤 My Account</h2></div><div class="item"><b>Welcome to ScentCafe</b><p>Your future dashboard can show applications, requests, WiFi usage, and updates.</p></div></section>
+</main><nav class="bottom"><button onclick="show('home')"><span>🏠</span>Home</button><button onclick="openService('All Services','📋',['Government Services','Jobs & CVs','Education','Applications'])"><span>📋</span>Services</button><button onclick="openWifi()"><span>📶</span>WiFi</button><button onclick="show('account')"><span>👤</span>Account</button></nav>
+</div><div id="toast" class="toast"></div><script>
+function show(id){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');scrollTo(0,0)}
+function openService(title, icon, items){document.getElementById('serviceTitle').textContent = icon + ' ' + title; const wrap=document.getElementById('serviceItems'); wrap.innerHTML=''; items.forEach(item=>{ const el=document.createElement('div'); el.className='item'; el.innerHTML='<b>'+item+'</b><p>Get help with this service quickly through the ScentCafe support flow.</p>'; wrap.appendChild(el);}); show('service');}
+function openWifi(){show('wifi');}
+function toast(msg){const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(window.toastTimer); window.toastTimer=setTimeout(()=>t.classList.remove('show'),1800)}
 let deferredInstallPrompt = null;
-
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./sw.js").catch(() => {});
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
   });
 }
-
-window.addEventListener("beforeinstallprompt", (event) => {
+window.addEventListener('beforeinstallprompt', (event) => {
   event.preventDefault();
   deferredInstallPrompt = event;
-  const card = document.getElementById("installCard");
-  if (card) card.classList.add("show");
+  const card = document.getElementById('installCard');
+  if (card) card.classList.add('show');
 });
-
-document.addEventListener("click", async (event) => {
-  if (event.target && event.target.id === "installBtn" && deferredInstallPrompt) {
+document.addEventListener('click', async (event) => {
+  if (event.target && event.target.id === 'installBtn' && deferredInstallPrompt) {
     deferredInstallPrompt.prompt();
     await deferredInstallPrompt.userChoice;
     deferredInstallPrompt = null;
-    document.getElementById("installCard").classList.remove("show");
+    document.getElementById('installCard').classList.remove('show');
   }
 });
-
-window.addEventListener("appinstalled", () => {
-  const card = document.getElementById("installCard");
-  if (card) card.classList.remove("show");
+window.addEventListener('appinstalled', () => {
+  const card = document.getElementById('installCard');
+  if (card) card.classList.remove('show');
 });
-</script>
-</body></html>
+</script></body></html>
