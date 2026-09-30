@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192" role="img" aria-label="ScentCafe logo">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#201711"/>
+      <stop offset="100%" stop-color="#3b2617"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#f2d39d"/>
+      <stop offset="100%" stop-color="#c98d3f"/>
+    </linearGradient>
+  </defs>
+  <rect width="192" height="192" rx="42" fill="url(#bg)"/>
+  <g transform="translate(0 8)">
+    <path d="M62 66h68c12 0 22 10 22 22v18c0 34-26 57-56 57S46 140 46 106V88c0-12 10-22 22-22h-6z" fill="none" stroke="url(#gold)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M60 68h72c7 0 12 5 12 12v10H48V80c0-7 5-12 12-12z" fill="url(#gold)" opacity="0.9"/>
+    <path d="M66 52c0-17 14-30 31-30s31 13 31 30" fill="none" stroke="#f2d39d" stroke-width="8" stroke-linecap="round"/>
+    <path d="M80 82c3 8 10 14 18 14s15-6 18-14" fill="none" stroke="#201711" stroke-width="5" stroke-linecap="round"/>
+    <path d="M52 101c10 6 22 9 34 9 14 0 28-4 38-11" fill="none" stroke="#201711" stroke-width="5" stroke-linecap="round" opacity="0.7"/>
+    <circle cx="48" cy="44" r="5" fill="#f7d48d"/>
+    <circle cx="144" cy="44" r="5" fill="#f7d48d"/>
+    <circle cx="120" cy="30" r="4" fill="#f7d48d"/>
+  </g>
+</svg>
