@@ -1,0 +1,16 @@
+/* Extracted CSS for modular organization */
+:root {
+    --primary: #D4A574;
+    --primary-dark: #9a6a3f;
+    --dark-bg: #1a1410;
+    --dark-card: #2a2420;
+    --light-text: #f5f5f5;
+    --muted: #999;
+    --accent: #FFD700;
+    --success: #4CAF50;
+    --warning: #FF9800;
+    --info: #2196F3;
+    --danger: #F44336;
+}
+
+/* All CSS is embedded in index.html for PWA compatibility */

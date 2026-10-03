@@ -1,10 +1,1297 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ScentCafe App</title><style>
-:root{--ink:#19130f;--cream:#f7f2ec;--card:#fff;--muted:#777;--line:#eadfd4;--accent:#9a6a3f}*{box-sizing:border-box}body{margin:0;background:#e9e4df;font-family:Inter,Arial,sans-serif;color:var(--ink)}.phone{max-width:480px;margin:0 auto;background:var(--cream);min-height:100vh;box-shadow:0 0 0 1px rgba(25,19,15,.06)}.top{padding:18px 18px 6px}.brand{font-weight:900;font-size:32px;color:var(--ink)}.tag{font-size:12px;color:var(--muted);margin-top:4px}.search{margin-top:16px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:12px 14px;color:var(--muted);font-size:13px}.content{padding:10px 18px 90px}.screen{display:none}.screen.active{display:block}.section{display:flex;justify-content:space-between;align-items:center;margin:18px 0 10px}.section h2{margin:0;font-size:20px}.small{color:var(--muted);font-size:12px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px 12px;box-shadow:0 6px 18px rgba(17,10,7,.03);min-height:120px}.ico{font-size:28px;margin-bottom:6px}.card b{display:block;font-size:15px}.card p{margin:7px 0 0;color:var(--muted);font-size:11px;line-height:1.5}.pills{display:flex;flex-wrap:wrap;gap:8px}.pill{padding:9px 12px;border-radius:999px;background:#fff;border:1px solid var(--line);font-size:12px;color:var(--ink)}.item{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px 15px;margin-bottom:12px}.item b{display:block;font-size:15px}.item p{margin:6px 0 0;color:var(--muted);font-size:12px;line-height:1.55}.back{background:transparent;border:none;color:var(--ink);font-weight:700;font-size:18px;padding:0 0 12px}.btn{border:0;background:var(--accent);color:#fff;border-radius:12px;padding:10px 14px;font-weight:700}.ai{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px 15px;margin:16px 0 4px}.robot{font-size:28px}.ai p{margin:4px 0 0;color:var(--muted);font-size:12px}.bottom{position:fixed;left:50%;bottom:0;transform:translateX(-50%);width:min(100%,480px);background:#fff;border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,minmax(0,1fr));padding:8px 10px 12px;box-shadow:0 -6px 18px rgba(17,10,7,.04)}.bottom button{background:transparent;border:none;padding:8px 0;font-size:11px;color:var(--muted);display:flex;flex-direction:column;align-items:center;gap:6px}.bottom button span{font-size:20px}.toast{position:fixed;left:50%;bottom:80px;transform:translateX(-50%);background:#19130f;color:#fff;padding:10px 14px;border-radius:999px;font-size:12px;opacity:0;transition:opacity .2s ease}.toast.show{opacity:1}.install-card{display:none;margin:14px 0 0;background:#9a6a3f;color:#fff;border-radius:18px;padding:14px 15px;box-shadow:0 5px 15px rgba(0,0,0,.12)}.install-card.show{display:flex;align-items:center;gap:12px}.install-card .install-text{flex:1}.install-card b{font-size:13px}.install-card p{font-size:10px;opacity:.85;margin:4px 0 0}.install-card button{border:0;border-radius:10px;padding:9px 11px;font-weight:700;font-size:11px;background:#fff;color:#19130f}</style>
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#19130f">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="icon" type="image/svg+xml" sizes="192x192" href="icons/icon-192.svg">
-<link rel="apple-touch-icon" href="icons/icon-192.svg">
-</head><body><div class="phone"><header class="top"><div class="brand">ScentCafe</div><div class="tag">Reliable support at your fingertips</div><div class="search">🔎 &nbsp; What do you need help with?</div></header><main class="content"><section id="home" class="screen active"><div class="section"><h2>Quick Services</h2><span class="small">View all</span></div><div class="grid"><div class="card" onclick="openService('Government Services','🏛️',['SARS assistance','Home Affairs assistance','SRD assistance','NATIS assistance','IEC assistance'])"><div class="ico">🏛️</div><b>Government Services</b><p>Fast support and assistance for essential services.</p></div><div class="card" onclick="openService('Jobs & CVs','💼',['Job portal assistance','Professional CVs','CV updates','Job search support'])"><div class="ico">💼</div><b>Jobs & CVs</b><p>Get help finding work and creating standout CVs.</p></div><div class="card" onclick="openService('Education','🎓',['School admissions','University applications','NSFAS information','Application support'])"><div class="ico">🎓</div><b>Education</b><p>Support for students and school applications.</p></div><div class="card" onclick="openService('Applications','📄',['Online applications','Document assistance','Email assistance','Application tracking'])"><div class="ico">📄</div><b>Applications</b><p>Help with digital application processes.</p></div></div><div id="installCard" class="install-card"><div style="font-size:25px">📱</div><div class="install-text"><b>Install ScentCafe</b><p>Add ScentCafe to your Android home screen.</p></div><button id="installBtn">Install</button></div><div class="ai"><div class="robot">🤖</div><div><b>ScentCafe AI Assistant</b><p>Tell me what you need help with.</p><button class="btn" onclick="toast('AI Assistant is ready for chatbot integration.')">Try AI</button></div></div><div class="section"><h2>Popular</h2></div><div class="pills"><div class="pill">📱 SRD</div><div class="pill">🪪 Home Affairs</div><div class="pill">📚 School Applications</div><div class="pill">💼 CV Help</div></div><div class="section"><h2>ScentCafe WiFi</h2><span class="small">Open</span></div><div class="card" onclick="openWifi()"><div class="service"><div class="ico">📶</div><div><b>Connect to ScentCafe WiFi</b><p>Buy a voucher and connect.</p></div></div></div></section><section id="service" class="screen"><button class="back" onclick="show('home')">← Back</button><div class="section"><h2 id="serviceTitle"></h2></div><div id="serviceItems"></div><button class="btn" onclick="toast('More support options coming soon.')">Get Help</button></section><section id="wifi" class="screen"><button class="back" onclick="show('home')">← Back</button><div class="section"><h2>📶 ScentCafe WiFi</h2></div><div class="item"><b>Buy a WiFi voucher</b><p>Buy a voucher from the ScentCafe kiosk or counter.</p></div><div class="item"><b>Connect</b><p>Use the WiFi network and open the login page to complete setup.</p></div><button class="btn" onclick="toast('Voucher support is available in-store.')">Need Help?</button></section><section id="account" class="screen"><div class="section"><h2>👤 My Account</h2></div><div class="item"><b>Welcome to ScentCafe</b><p>Your future dashboard can show applications, requests, and WiFi activity.</p></div></section></main><nav class="bottom"><button onclick="show('home')"><span>🏠</span>Home</button><button onclick="show('service')"><span>📋</span>Services</button><button onclick="openWifi()"><span>📶</span>WiFi</button><button onclick="show('account')"><span>👤</span>Account</button></nav></div><div id="toast" class="toast"></div><script>function show(id){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));document.getElementById(id).classList.add('active');scrollTo(0,0)}function openService(title,emoji,items){document.getElementById('serviceTitle').textContent=emoji+' '+title;const box=document.getElementById('serviceItems');box.innerHTML='';items.forEach(item=>{const el=document.createElement('div');el.className='item';el.innerHTML='<b>'+item+'</b><p>Support is available through the ScentCafe service desk.</p>';box.appendChild(el)});show('service')}function openWifi(){show('wifi')}function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>t.classList.remove('show'),1800)}let deferredInstallPrompt=null;if('serviceWorker' in navigator){window.addEventListener('load',()=>{navigator.serviceWorker.register('./sw.js').catch(()=>{})})}window.addEventListener('beforeinstallprompt',event=>{event.preventDefault();deferredInstallPrompt=event;const card=document.getElementById('installCard');if(card)card.classList.add('show')});document.addEventListener('click',async event=>{if(event.target&&event.target.id==='installBtn'&&deferredInstallPrompt){deferredInstallPrompt.prompt();await deferredInstallPrompt.userChoice;deferredInstallPrompt=null;document.getElementById('installCard').classList.remove('show')}});window.addEventListener('appinstalled',()=>{const card=document.getElementById('installCard');if(card)card.classList.remove('show')})</script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ScentCafe - Your Goals. Our Support.</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#19130f">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="icon" type="image/svg+xml" sizes="192x192" href="icon-192.svg">
+    <link rel="apple-touch-icon" href="icon-192.svg">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #D4A574;
+            --primary-dark: #9a6a3f;
+            --dark-bg: #1a1410;
+            --dark-card: #2a2420;
+            --light-text: #f5f5f5;
+            --muted: #999;
+            --accent: #FFD700;
+            --success: #4CAF50;
+            --warning: #FF9800;
+            --info: #2196F3;
+            --danger: #F44336;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: var(--dark-bg);
+            color: var(--light-text);
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+            background: var(--dark-bg);
+        }
+
+        .phone-frame {
+            width: 100%;
+            max-width: 420px;
+            height: 100vh;
+            margin: 0 auto;
+            background: var(--dark-bg);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            box-shadow: 0 0 50px rgba(0,0,0,0.8);
+        }
+
+        .status-bar {
+            background: var(--dark-bg);
+            padding: 8px 16px;
+            font-size: 12px;
+            color: var(--light-text);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(212, 165, 116, 0.1);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1a1410 0%, #2a2420 100%);
+            padding: 16px;
+            border-bottom: 1px solid rgba(212, 165, 116, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .header-logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .header-brand {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--light-text);
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 20px;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .icon-btn:hover {
+            background: rgba(212, 165, 116, 0.1);
+        }
+
+        .search-bar {
+            padding: 12px 16px;
+            background: var(--dark-card);
+            border-bottom: 1px solid rgba(212, 165, 116, 0.1);
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 12px;
+            background: rgba(212, 165, 116, 0.1);
+            border: 1px solid rgba(212, 165, 116, 0.2);
+            border-radius: 8px;
+            color: var(--light-text);
+            font-size: 14px;
+        }
+
+        .search-input::placeholder {
+            color: var(--muted);
+        }
+
+        .screen {
+            flex: 1;
+            overflow-y: auto;
+            display: none;
+            flex-direction: column;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        .screen-content {
+            padding: 16px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .welcome-section {
+            text-align: center;
+            padding: 24px 16px;
+            background: linear-gradient(135deg, rgba(212, 165, 116, 0.1) 0%, rgba(212, 165, 116, 0.05) 100%);
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .welcome-greeting {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .welcome-tagline {
+            font-size: 14px;
+            color: var(--muted);
+        }
+
+        .service-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .service-card {
+            background: var(--dark-card);
+            border: 1px solid rgba(212, 165, 116, 0.2);
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .service-card:hover {
+            background: rgba(212, 165, 116, 0.15);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .service-icon {
+            font-size: 28px;
+            background: linear-gradient(135deg, rgba(212, 165, 116, 0.2) 0%, rgba(212, 165, 116, 0.1) 100%);
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .service-name {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+            color: var(--primary);
+        }
+
+        .item-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .item {
+            background: var(--dark-card);
+            border: 1px solid rgba(212, 165, 116, 0.2);
+            border-radius: 10px;
+            padding: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .item:hover {
+            background: rgba(212, 165, 116, 0.15);
+            border-color: var(--primary);
+        }
+
+        .item-info {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex: 1;
+        }
+
+        .item-icon {
+            font-size: 20px;
+            background: linear-gradient(135deg, rgba(212, 165, 116, 0.2) 0%, rgba(212, 165, 116, 0.1) 100%);
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .item-details {
+            flex: 1;
+        }
+
+        .item-title {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .item-description {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .item-badge {
+            font-size: 11px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            background: rgba(212, 165, 116, 0.2);
+            color: var(--primary);
+            white-space: nowrap;
+        }
+
+        .badge-success {
+            background: rgba(76, 175, 80, 0.2);
+            color: var(--success);
+        }
+
+        .badge-warning {
+            background: rgba(255, 152, 0, 0.2);
+            color: var(--warning);
+        }
+
+        .badge-info {
+            background: rgba(33, 150, 243, 0.2);
+            color: var(--info);
+        }
+
+        .badge-danger {
+            background: rgba(244, 67, 54, 0.2);
+            color: var(--danger);
+        }
+
+        .profile-section {
+            background: var(--dark-card);
+            border: 1px solid rgba(212, 165, 116, 0.2);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .profile-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .profile-info {
+            flex: 1;
+        }
+
+        .profile-name {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .profile-email {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .btn {
+            background: var(--primary);
+            color: var(--dark-bg);
+            border: none;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            width: 100%;
+            margin-top: 12px;
+        }
+
+        .btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(212, 165, 116, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--dark-card);
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(212, 165, 116, 0.1);
+        }
+
+        .input-group {
+            margin-bottom: 12px;
+        }
+
+        .input-label {
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 6px;
+            display: block;
+            color: var(--primary);
+        }
+
+        .input {
+            width: 100%;
+            padding: 10px 12px;
+            background: var(--dark-card);
+            border: 1px solid rgba(212, 165, 116, 0.2);
+            border-radius: 8px;
+            color: var(--light-text);
+            font-size: 14px;
+        }
+
+        .input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(212, 165, 116, 0.1);
+        }
+
+        .bottom-nav {
+            background: linear-gradient(to top, var(--dark-bg) 0%, transparent 100%);
+            border-top: 1px solid rgba(212, 165, 116, 0.2);
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0 16px 0;
+            position: relative;
+            z-index: 10;
+        }
+
+        .nav-item {
+            background: none;
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+            font-size: 11px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            padding: 8px 12px;
+            transition: all 0.2s;
+            flex: 1;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
+
+        .nav-icon {
+            font-size: 20px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 100;
+            align-items: flex-end;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: var(--dark-bg);
+            border-radius: 16px 16px 0 0;
+            padding: 24px 16px;
+            width: 100%;
+            max-width: 420px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .job-card {
+            background: var(--dark-card);
+            border: 1px solid rgba(212, 165, 116, 0.2);
+            border-radius: 10px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+
+        .job-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 8px;
+        }
+
+        .job-title {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .job-company {
+            font-size: 12px;
+            color: var(--muted);
+        }
+
+        .job-location {
+            font-size: 12px;
+            color: var(--muted);
+            margin-top: 4px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--muted);
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .empty-state-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--light-text);
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 6px;
+        }
+
+        .status-online {
+            background: var(--success);
+        }
+
+        .status-offline {
+            background: var(--muted);
+        }
+
+        .chat-message {
+            background: var(--dark-card);
+            border-radius: 12px;
+            padding: 12px;
+            margin-bottom: 12px;
+            font-size: 13px;
+            line-height: 1.4;
+        }
+
+        .chat-input-area {
+            display: flex;
+            gap: 8px;
+            padding: 12px 0;
+            background: var(--dark-bg);
+            border-top: 1px solid rgba(212, 165, 116, 0.2);
+        }
+
+        .chat-input {
+            flex: 1;
+            background: var(--dark-card);
+            border: 1px solid rgba(212, 165, 116, 0.2);
+            border-radius: 20px;
+            padding: 10px 14px;
+            color: var(--light-text);
+            font-size: 13px;
+        }
+
+        .chat-input::placeholder {
+            color: var(--muted);
+        }
+
+        .chat-send {
+            background: var(--primary);
+            color: var(--dark-bg);
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+            border-bottom: 1px solid rgba(212, 165, 116, 0.2);
+            padding-bottom: 12px;
+        }
+
+        .tab {
+            background: none;
+            border: none;
+            color: var(--muted);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            padding-bottom: 4px;
+            position: relative;
+            white-space: nowrap;
+        }
+
+        .tab.active {
+            color: var(--primary);
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -12px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--primary);
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 2px solid rgba(212, 165, 116, 0.3);
+            border-top: 2px solid var(--primary);
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(212, 165, 116, 0.3);
+            border-radius: 3px;
+        }
+
+        .scrollbar::-webkit-scrollbar-thumb:hover {
+            background: rgba(212, 165, 116, 0.5);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="phone-frame">
+            <div class="status-bar">
+                <span>9:41</span>
+                <span>📡 📶 🔋</span>
+            </div>
+
+            <div class="header">
+                <div class="header-title">
+                    <div class="header-logo">S</div>
+                    <div>
+                        <div class="header-brand">ScentCafe</div>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button class="icon-btn" title="Notifications">🔔</button>
+                </div>
+            </div>
+
+            <div class="search-bar">
+                <input type="text" class="search-input" placeholder="🔎 Search services, jobs...">
+            </div>
+
+            <!-- HOME SCREEN -->
+            <div class="screen active" id="home-screen">
+                <div class="screen-content scrollbar">
+                    <div class="welcome-section">
+                        <div class="welcome-greeting">Hello, User</div>
+                        <div class="welcome-tagline">Your goals. Our support.</div>
+                    </div>
+
+                    <div class="service-grid">
+                        <div class="service-card" onclick="navigateTo('government')">
+                            <div class="service-icon">🏛️</div>
+                            <div class="service-name">Government Services</div>
+                        </div>
+                        <div class="service-card" onclick="navigateTo('jobs')">
+                            <div class="service-icon">💼</div>
+                            <div class="service-name">Jobs & CVs</div>
+                        </div>
+                        <div class="service-card" onclick="navigateTo('education')">
+                            <div class="service-icon">🎓</div>
+                            <div class="service-name">Education</div>
+                        </div>
+                        <div class="service-card" onclick="navigateTo('applications')">
+                            <div class="service-icon">📋</div>
+                            <div class="service-name">Applications</div>
+                        </div>
+                        <div class="service-card" onclick="navigateTo('ai')">
+                            <div class="service-icon">🤖</div>
+                            <div class="service-name">AI Assistant</div>
+                        </div>
+                        <div class="service-card" onclick="navigateTo('wifi')">
+                            <div class="service-icon">📶</div>
+                            <div class="service-name">WiFi</div>
+                        </div>
+                        <div class="service-card" onclick="navigateTo('account')">
+                            <div class="service-icon">👤</div>
+                            <div class="service-name">My Account</div>
+                        </div>
+                        <div class="service-card" onclick="navigateTo('support')">
+                            <div class="service-icon">💬</div>
+                            <div class="service-name">Support</div>
+                        </div>
+                    </div>
+
+                    <div class="section-title">Recently Used</div>
+                    <div class="item-list">
+                        <div class="item" onclick="navigateTo('government')">
+                            <div class="item-info">
+                                <div class="item-icon">📄</div>
+                                <div class="item-details">
+                                    <div class="item-title">SRD Grant Application</div>
+                                    <div class="item-description">Social Relief of Distress</div>
+                                </div>
+                            </div>
+                            <div class="item-badge badge-info">In Progress</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- GOVERNMENT SERVICES -->
+            <div class="screen" id="government-screen">
+                <div class="screen-content scrollbar">
+                    <div class="section-title">Government Services</div>
+                    <div class="item-list">
+                        <div class="item">
+                            <div class="item-info">
+                                <div class="item-icon">💉</div>
+                                <div class="item-details">
+                                    <div class="item-title">SARS</div>
+                                    <div class="item-description">Tax returns, refunds, negotiations</div>
+                                </div>
+                            </div>
+                            <span>→</span>
+                        </div>
+                        <div class="item">
+                            <div class="item-info">
+                                <div class="item-icon">🏠</div>
+                                <div class="item-details">
+                                    <div class="item-title">Home Affairs</div>
+                                    <div class="item-description">Passports, birth certificates</div>
+                                </div>
+                            </div>
+                            <span>→</span>
+                        </div>
+                        <div class="item">
+                            <div class="item-info">
+                                <div class="item-icon">🛡️</div>
+                                <div class="item-details">
+                                    <div class="item-title">SRD Grant</div>
+                                    <div class="item-description">Social Relief of Distress</div>
+                                </div>
+                            </div>
+                            <div class="item-badge badge-success">Completed</div>
+                        </div>
+                        <div class="item">
+                            <div class="item-info">
+                                <div class="item-icon">🚗</div>
+                                <div class="item-details">
+                                    <div class="item-title">NATIS</div>
+                                    <div class="item-description">Vehicle registration & licensing</div>
+                                </div>
+                            </div>
+                            <span>→</span>
+                        </div>
+                        <div class="item">
+                            <div class="item-info">
+                                <div class="item-icon">🏥</div>
+                                <div class="item-details">
+                                    <div class="item-title">UIF</div>
+                                    <div class="item-description">Unemployment Insurance Fund</div>
+                                </div>
+                            </div>
+                            <span>→</span>
+                        </div>
+                        <div class="item">
+                            <div class="item-info">
+                                <div class="item-icon">🏛️</div>
+                                <div class="item-details">
+                                    <div class="item-title">IEC</div>
+                                    <div class="item-description">Voter registration & information</div>
+                                </div>
+                            </div>
+                            <span>→</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- JOBS & CVs -->
+            <div class="screen" id="jobs-screen">
+                <div class="screen-content scrollbar">
+                    <div class="tabs">
+                        <button class="tab active" onclick="switchJobTab('available')">Available Jobs</button>
+                        <button class="tab" onclick="switchJobTab('applied')">Applied</button>
+                        <button class="tab" onclick="switchJobTab('saved')">Saved</button>
+                    </div>
+                    
+                    <div id="available-jobs">
+                        <div class="job-card">
+                            <div class="job-header">
+                                <div>
+                                    <div class="job-title">Retail Assistant</div>
+                                    <div class="job-company">Shoprite</div>
+                                    <div class="job-location">📍 Johannesburg</div>
+                                </div>
+                                <div class="item-badge badge-success">New</div>
+                            </div>
+                        </div>
+                        <div class="job-card">
+                            <div class="job-header">
+                                <div>
+                                    <div class="job-title">General Worker</div>
+                                    <div class="job-company">Department of Public Works</div>
+                                    <div class="job-location">📍 Johannesburg</div>
+                                </div>
+                                <div class="item-badge badge-info">Full Time</div>
+                            </div>
+                        </div>
+                        <div class="job-card">
+                            <div class="job-header">
+                                <div>
+                                    <div class="job-title">Customer Service Agent</div>
+                                    <div class="job-company">Call Centre</div>
+                                    <div class="job-location">📍 Pretoria</div>
+                                </div>
+                                <div class="item-badge badge-warning">Contract</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="applied-jobs" style="display:none;">
+                        <div class="job-card">
+                            <div class="job-header">
+                                <div>
+                                    <div class="job-title">Admin Clerk</div>
+                                    <div class="job-company">Local Municipality</div>
+                                </div>
+                                <div class="item-badge badge-info">Under Review</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="saved-jobs" style="display:none;">
+                        <div class="empty-state">
+                            <div class="empty-state-icon">❤️</div>
+                            <div class="empty-state-title">No saved jobs yet</div>
+                            <div>Save jobs to view them here later</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- EDUCATION -->
+            <div class="screen" id="education-screen">
+                <div class="screen-content scrollbar">
+                    <div class="section-title">Education Programs</div>
+                    <div class="item-list">
+                        <div class="item">
+                            <div class="item-info">
+                                <div class="item-icon">🎓</div>
+                                <div class="item-details">
+                                    <div class="item-title">University Applications</div>
+                                    <div class="item-description">Apply, check status, get support</div>
+                                </div>
+                            </div>
+                            <span>→</span>
+                        </div>
+                        <div class="item">
+                            <div class="item-info">
+                                <div class="item-icon">🏫</div>
+                                <div class="item-details">
+                                    <div class="item-title">College Applications</div>
+                                    <div class="item-description">TVET colleges, FET, Colleges</div>
+                                </div>
+                            </div>
+                            <span>→</span>
+                        </div>
+                        <div class="item">
+                            <div class="item-info">
+                                <div class="item-icon">🏢</div>
+                                <div class="item-details">
+                                    <div class="item-title">School Admissions</div>
+                                    <div class="item-description">Primary & High School</div>
+                                </div>
+                            </div>
+                            <span>→</span>
+                        </div>
+                        <div class="item">
+                            <div class="item-info">
+                                <div class="item-icon">📚</div>
+                                <div class="item-details">
+                                    <div class="item-title">NSFAS Funding</div>
+                                    <div class="item-description">Applications & support</div>
+                                </div>
+                            </div>
+                            <span>→</span>
+                        </div>
+                        <div class="item">
+                            <div class="item-info">
+                                <div class="item-icon">📖</div>
+                                <div class="item-details">
+                                    <div class="item-title">Education Support</div>
+                                    <div class="item-description">Documents & guidance</div>
+                                </div>
+                            </div>
+                            <span>→</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- APPLICATIONS -->
+            <div class="screen" id="applications-screen">
+                <div class="screen-content scrollbar">
+                    <div class="section-title">My Applications</div>
+                    <div class="tabs">
+                        <button class="tab active" onclick="switchAppTab('all')">All</button>
+                        <button class="tab" onclick="switchAppTab('progress')">In Progress</button>
+                        <button class="tab" onclick="switchAppTab('completed')">Completed</button>
+                    </div>
+                    
+                    <div id="all-apps">
+                        <div class="item">
+                            <div class="item-info">
+                                <div class="item-icon">🏛️</div>
+                                <div class="item-details">
+                                    <div class="item-title">NSFAS Application</div>
+                                    <div class="item-description">Ref: #SC20230930-001</div>
+                                </div>
+                            </div>
+                            <div class="item-badge badge-warning">Under Review</div>
+                        </div>
+                        <div class="item">
+                            <div class="item-info">
+                                <div class="item-icon">📋</div>
+                                <div class="item-details">
+                                    <div class="item-title">SARS Tax Return</div>
+                                    <div class="item-description">Ref: #SC20230915-013</div>
+                                </div>
+                            </div>
+                            <div class="item-badge badge-info">In Progress</div>
+                        </div>
+                        <div class="item">
+                            <div class="item-info">
+                                <div class="item-icon">🎯</div>
+                                <div class="item-details">
+                                    <div class="item-title">Job Application</div>
+                                    <div class="item-description">Ref: #SC20230824-008</div>
+                                </div>
+                            </div>
+                            <div class="item-badge badge-success">Completed</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI ASSISTANT -->
+            <div class="screen" id="ai-screen">
+                <div class="screen-content scrollbar">
+                    <div style="padding-bottom: 60px;">
+                        <div class="chat-message" style="background: rgba(212, 165, 116, 0.2); text-align: center; margin-top: 20px;">
+                            <div style="font-weight: 600; color: var(--primary);">ScentCafe AI Assistant</div>
+                            <div style="font-size: 12px; color: var(--muted); margin-top: 4px;">Ask anything, get instant help</div>
+                        </div>
+                        <div class="chat-message">Hi! I'm your ScentCafe AI Assistant. How can I help you today? I can help you with:
+                            <br>• Government services applications
+                            <br>• Job searches and CV tips
+                            <br>• Education programs
+                            <br>• Account management
+                            <br>• WiFi setup</div>
+                    </div>
+                </div>
+                <div class="chat-input-area" style="padding: 12px 16px;">
+                    <input type="text" class="chat-input" placeholder="Ask me anything...">
+                    <button class="chat-send">→</button>
+                </div>
+            </div>
+
+            <!-- WiFi -->
+            <div class="screen" id="wifi-screen">
+                <div class="screen-content scrollbar">
+                    <div class="section-title">ScentCafe WiFi</div>
+                    <div style="background: var(--dark-card); border: 1px solid rgba(212, 165, 116, 0.2); border-radius: 12px; padding: 20px; text-align: center; margin-bottom: 20px;">
+                        <div style="font-size: 48px; margin-bottom: 12px;">📶</div>
+                        <div style="font-size: 16px; font-weight: 600; margin-bottom: 8px;">Connected</div>
+                        <div style="font-size: 13px; color: var(--muted); margin-bottom: 16px;">You have 2.65 GB remaining</div>
+                        <div style="background: rgba(212, 165, 116, 0.1); border-radius: 8px; padding: 8px; margin-bottom: 16px;">
+                            <div style="font-size: 12px; color: var(--muted); margin-bottom: 8px;">Data Usage</div>
+                            <div style="height: 8px; background: rgba(212, 165, 116, 0.2); border-radius: 4px; overflow: hidden;">
+                                <div style="height: 100%; width: 35%; background: var(--primary);"></div>
+                            </div>
+                        </div>
+                        <button class="btn btn-secondary">Disconnect</button>
+                    </div>
+
+                    <div class="section-title">WiFi Services</div>
+                    <div class="item-list">
+                        <div class="item">
+                            <div class="item-info">
+                                <div class="item-icon">💳</div>
+                                <div class="item-details">
+                                    <div class="item-title">Buy Voucher</div>
+                                    <div class="item-description">Get a WiFi voucher</div>
+                                </div>
+                            </div>
+                            <span>→</span>
+                        </div>
+                        <div class="item">
+                            <div class="item-info">
+                                <div class="item-icon">🎁</div>
+                                <div class="item-details">
+                                    <div class="item-title">Enter Voucher</div>
+                                    <div class="item-description">Activate your voucher</div>
+                                </div>
+                            </div>
+                            <span>→</span>
+                        </div>
+                        <div class="item">
+                            <div class="item-info">
+                                <div class="item-icon">📊</div>
+                                <div class="item-details">
+                                    <div class="item-title">WiFi Packages</div>
+                                    <div class="item-description">View all packages</div>
+                                </div>
+                            </div>
+                            <span>→</span>
+                        </div>
+                        <div class="item">
+                            <div class="item-info">
+                                <div class="item-icon">🔐</div>
+                                <div class="item-details">
+                                    <div class="item-title">Manage Access</div>
+                                    <div class="item-description">Check usage & data</div>
+                                </div>
+                            </div>
+                            <span>→</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ACCOUNT -->
+            <div class="screen" id="account-screen">
+                <div class="screen-content scrollbar">
+                    <div class="profile-section">
+                        <div class="profile-avatar">S</div>
+                        <div class="profile-info">
+                            <div class="profile-name">Siyabonga Masina</div>
+                            <div class="profile-email">siyabonga@gmail.com</div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-secondary" style="margin-top: 0;">Edit Profile</button>
+
+                    <div class="section-title" style="margin-top: 20px;">Account Options</div>
+                    <div class="item-list">
+                        <div class="item">
+                            <div class="item-info">
+                                <div class="item-icon">👤</div>
+                                <div class="item-details">
+                                    <div class="item-title">Personal Details</div>
+                                </div>
+                            </div>
+                            <span>→</span>
+                        </div>
+                        <div class="item">
+                            <div class="item-info">
+                                <div class="item-icon">📄</div>
+                                <div class="item-details">
+                                    <div class="item-title">Documents</div>
+                                </div>
+                            </div>
+                            <span>→</span>
+                        </div>
+                        <div class="item">
+                            <div class="item-info">
+                                <div class="item-icon">📋</div>
+                                <div class="item-details">
+                                    <div class="item-title">My Applications</div>
+                                </div>
+                            </div>
+                            <span>→</span>
+                        </div>
+                        <div class="item">
+                            <div class="item-info">
+                                <div class="item-icon">🔔</div>
+                                <div class="item-details">
+                                    <div class="item-title">Notifications</div>
+                                </div>
+                            </div>
+                            <span>→</span>
+                        </div>
+                        <div class="item">
+                            <div class="item-info">
+                                <div class="item-icon">⏱️</div>
+                                <div class="item-details">
+                                    <div class="item-title">Support History</div>
+                                </div>
+                            </div>
+                            <span>→</span>
+                        </div>
+                        <div class="item">
+                            <div class="item-info">
+                                <div class="item-icon">⚙️</div>
+                                <div class="item-details">
+                                    <div class="item-title">Settings</div>
+                                </div>
+                            </div>
+                            <span>→</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SUPPORT -->
+            <div class="screen" id="support-screen">
+                <div class="screen-content scrollbar">
+                    <div class="section-title">Get Support</div>
+                    <div class="item-list">
+                        <div class="item">
+                            <div class="item-info">
+                                <div class="item-icon">💬</div>
+                                <div class="item-details">
+                                    <div class="item-title">Chat with ScentCafe AI</div>
+                                    <div class="item-description">Available 24/7</div>
+                                </div>
+                            </div>
+                            <span>→</span>
+                        </div>
+                        <div class="item">
+                            <div class="item-info">
+                                <div class="item-icon">💬</div>
+                                <div class="item-details">
+                                    <div class="item-title">WhatsApp Support</div>
+                                    <div class="item-description">Chat with our team</div>
+                                </div>
+                            </div>
+                            <span>→</span>
+                        </div>
+                        <div class="item">
+                            <div class="item-info">
+                                <div class="item-icon">☎️</div>
+                                <div class="item-details">
+                                    <div class="item-title">Call Us</div>
+                                    <div class="item-description">064 643 8872</div>
+                                </div>
+                            </div>
+                            <span>→</span>
+                        </div>
+                        <div class="item">
+                            <div class="item-info">
+                                <div class="item-icon">✉️</div>
+                                <div class="item-details">
+                                    <div class="item-title">Email Support</div>
+                                    <div class="item-description">scentcafe@gmail.com</div>
+                                </div>
+                            </div>
+                            <span>→</span>
+                        </div>
+                    </div>
+
+                    <div class="section-title" style="margin-top: 20px;">Frequently Asked</div>
+                    <div class="item-list">
+                        <div class="item">
+                            <div class="item-info">
+                                <div class="item-icon">❓</div>
+                                <div class="item-details">
+                                    <div class="item-title">How do I apply for services?</div>
+                                </div>
+                            </div>
+                            <span>→</span>
+                        </div>
+                        <div class="item">
+                            <div class="item-info">
+                                <div class="item-icon">❓</div>
+                                <div class="item-details">
+                                    <div class="item-title">What documents do I need?</div>
+                                </div>
+                            </div>
+                            <span>→</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BOTTOM NAVIGATION -->
+            <div class="bottom-nav">
+                <button class="nav-item active" onclick="navigateTo('home')" data-screen="home-screen">
+                    <span class="nav-icon">🏠</span>
+                    <span>Home</span>
+                </button>
+                <button class="nav-item" onclick="navigateTo('services')" data-screen="services-screen">
+                    <span class="nav-icon">🛠️</span>
+                    <span>Services</span>
+                </button>
+                <button class="nav-item" onclick="navigateTo('requests')" data-screen="requests-screen">
+                    <span class="nav-icon">📋</span>
+                    <span>Requests</span>
+                </button>
+                <button class="nav-item" onclick="navigateTo('account')" data-screen="account-screen">
+                    <span class="nav-icon">👤</span>
+                    <span>Account</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function navigateTo(page) {
+            // Hide all screens
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+
+            // Update navigation items
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // Show the requested screen
+            const screenMap = {
+                'home': 'home-screen',
+                'government': 'government-screen',
+                'jobs': 'jobs-screen',
+                'education': 'education-screen',
+                'applications': 'applications-screen',
+                'ai': 'ai-screen',
+                'wifi': 'wifi-screen',
+                'account': 'account-screen',
+                'support': 'support-screen'
+            };
+
+            const screenId = screenMap[page];
+            if (screenId) {
+                document.getElementById(screenId).classList.add('active');
+            }
+
+            // Update active navigation item
+            document.querySelectorAll('.nav-item').forEach(item => {
+                if (item.getAttribute('data-screen') === screenId) {
+                    item.classList.add('active');
+                }
+            });
+        }
+
+        function switchJobTab(tab) {
+            document.querySelectorAll('#jobs-screen .tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.getElementById('available-jobs').style.display = 'none';
+            document.getElementById('applied-jobs').style.display = 'none';
+            document.getElementById('saved-jobs').style.display = 'none';
+            
+            if (tab === 'available') document.getElementById('available-jobs').style.display = 'block';
+            if (tab === 'applied') document.getElementById('applied-jobs').style.display = 'block';
+            if (tab === 'saved') document.getElementById('saved-jobs').style.display = 'block';
+        }
+
+        function switchAppTab(tab) {
+            document.querySelectorAll('#applications-screen .tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.getElementById('all-apps').style.display = 'none';
+            
+            if (tab === 'all') document.getElementById('all-apps').style.display = 'block';
+        }
+
+        // Register service worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js').catch(err => console.log('SW registration failed'));
+        }
+    </script>
+</body>
+</html>
