@@ -206,6 +206,15 @@ button {
   cursor: pointer;
 }
 
+.form-row {
+  display: flex;
+  gap: 10px;
+}
+
+.form-row > * {
+  flex: 1;
+}
+
 .ticket {
   background: #0d1b2d;
   border: 1px solid #263b55;
@@ -408,29 +417,52 @@ const STORAGE_KEYS = {
   tickets: "scentcafeTickets"
 };
 
+function validateEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function normalizeUser(user) {
+  if (!user || typeof user !== "object") return null;
+
+  const firstName = (user.firstName || "").trim();
+  const lastName = (user.lastName || "").trim();
+  const name = (user.name || `${firstName} ${lastName}`.trim() || "ScentCafe Customer").trim();
+
+  return {
+    firstName,
+    lastName,
+    name,
+    email: (user.email || "").toLowerCase().trim(),
+    password: user.password || ""
+  };
+}
+
 function getUsers() {
   const raw = localStorage.getItem(STORAGE_KEYS.users);
+
   if (!raw) {
-    const demoUser = {
+    const demoUser = normalizeUser({
       firstName: "ScentCafe",
       lastName: "Customer",
       name: "ScentCafe Customer",
       email: "customer@scentcafe.com",
       password: "password123"
-    };
+    });
+
     localStorage.setItem(STORAGE_KEYS.users, JSON.stringify([demoUser]));
     return [demoUser];
   }
 
   try {
-    return JSON.parse(raw);
+    const users = JSON.parse(raw).map(normalizeUser).filter(Boolean);
+    return users;
   } catch (error) {
     return [];
   }
 }
 
 function saveUsers(users) {
-  localStorage.setItem(STORAGE_KEYS.users, JSON.stringify(users));
+  localStorage.setItem(STORAGE_KEYS.users, JSON.stringify(users.map(normalizeUser).filter(Boolean)));
 }
 
 function getSessionUser() {
@@ -438,7 +470,7 @@ function getSessionUser() {
   if (!raw) return null;
 
   try {
-    return JSON.parse(raw);
+    return normalizeUser(JSON.parse(raw));
   } catch (error) {
     return null;
   }
@@ -449,7 +481,10 @@ function isLoggedIn() {
 }
 
 function setSession(user) {
-  localStorage.setItem(STORAGE_KEYS.session, JSON.stringify(user));
+  const normalized = normalizeUser(user);
+  if (!normalized) return;
+
+  localStorage.setItem(STORAGE_KEYS.session, JSON.stringify(normalized));
   localStorage.setItem(STORAGE_KEYS.loggedIn, "true");
 }
 
@@ -466,6 +501,110 @@ function getTickets() {
 function saveTickets(tickets) {
   localStorage.setItem(STORAGE_KEYS.tickets, JSON.stringify(tickets));
 }
+
+const authApi = {
+  async login(email, password) {
+    const users = getUsers();
+    const match = users.find(user => user.email === email.toLowerCase());
+
+    if (!match || match.password !== password) {
+      throw new Error("Invalid email or password.");
+    }
+
+    setSession(match);
+    return match;
+  },
+
+  async signup(payload) {
+    if (!payload.firstName || !payload.lastName || !payload.email || !payload.password) {
+      throw new Error("Please fill in all fields.");
+    }
+
+    if (!validateEmail(payload.email)) {
+      throw new Error("Please enter a valid email address.");
+    }
+
+    if (payload.password.length < 6) {
+      throw new Error("Password must be at least 6 characters long.");
+    }
+
+    const users = getUsers();
+    const exists = users.some(user => user.email === payload.email.toLowerCase());
+    if (exists) {
+      throw new Error("An account with this email already exists.");
+    }
+
+    const user = normalizeUser({
+      firstName: payload.firstName,
+      lastName: payload.lastName,
+      name: `${payload.firstName} ${payload.lastName}`,
+      email: payload.email,
+      password: payload.password
+    });
+
+    users.push(user);
+    saveUsers(users);
+    setSession(user);
+    return user;
+  },
+
+  async resetPassword(email, password) {
+    if (!email || !password) {
+      throw new Error("Please complete all fields.");
+    }
+
+    if (!validateEmail(email)) {
+      throw new Error("Please enter a valid email address.");
+    }
+
+    if (password.length < 6) {
+      throw new Error("Password must be at least 6 characters long.");
+    }
+
+    const users = getUsers();
+    const index = users.findIndex(user => user.email === email.toLowerCase());
+    if (index === -1) {
+      throw new Error("No account exists for that email address.");
+    }
+
+    users[index].password = password;
+    saveUsers(users);
+    return users[index];
+  },
+
+  async updateProfile(profile) {
+    if (!profile.firstName || !profile.lastName || !profile.email) {
+      throw new Error("Please fill in your name and email.");
+    }
+
+    if (!validateEmail(profile.email)) {
+      throw new Error("Please enter a valid email address.");
+    }
+
+    const users = getUsers();
+    const current = getSessionUser();
+    const currentEmail = current ? current.email : null;
+    const index = users.findIndex(user => user.email === currentEmail);
+
+    const updated = normalizeUser({
+      firstName: profile.firstName,
+      lastName: profile.lastName,
+      name: `${profile.firstName} ${profile.lastName}`,
+      email: profile.email,
+      password: current ? current.password : profile.password
+    });
+
+    if (index === -1) {
+      users.push(updated);
+    } else {
+      users[index] = updated;
+    }
+
+    saveUsers(users);
+    setSession(updated);
+    return updated;
+  }
+};
 
 function showPage(page) {
   const allowedPublicPages = ["login", "signup", "forgot"];
@@ -550,11 +689,16 @@ function render() {
             Register to access services and manage your requests.
           </p>
 
-          <label style="display:block;margin-top:20px;">First name</label>
-          <input id="signupFirstName" type="text" placeholder="First name">
-
-          <label>Last name</label>
-          <input id="signupLastName" type="text" placeholder="Last name">
+          <div class="form-row">
+            <div>
+              <label>First name</label>
+              <input id="signupFirstName" type="text" placeholder="First name">
+            </div>
+            <div>
+              <label>Last name</label>
+              <input id="signupLastName" type="text" placeholder="Last name">
+            </div>
+          </div>
 
           <label>Email address</label>
           <input id="signupEmail" type="email" placeholder="name@example.com">
@@ -794,7 +938,20 @@ function render() {
           <p style="margin-top:8px;">${user ? user.email : "customer@scentcafe.com"}</p>
         </div>
 
-        <button class="primary-btn" onclick="openRequest()">Make a Request</button>
+        <div class="auth-card" style="margin-top:0;">
+          <label>First name</label>
+          <input id="profileFirstName" type="text" value="${user ? user.firstName || "" : ""}">
+
+          <label>Last name</label>
+          <input id="profileLastName" type="text" value="${user ? user.lastName || "" : ""}">
+
+          <label>Email address</label>
+          <input id="profileEmail" type="email" value="${user ? user.email || "" : ""}">
+
+          <button class="primary-btn" onclick="saveProfile()">Save Profile</button>
+        </div>
+
+        <button class="secondary-btn" onclick="openRequest()">Make a Request</button>
         <button class="secondary-btn" onclick="showPage('requests')">View My Requests</button>
         <button class="secondary-btn" onclick="logout()">Sign Out</button>
       </div>
@@ -802,7 +959,7 @@ function render() {
   }
 }
 
-function handleLogin() {
+async function handleLogin() {
   const email = document.getElementById("loginEmail").value.trim();
   const password = document.getElementById("loginPassword").value.trim();
 
@@ -811,19 +968,15 @@ function handleLogin() {
     return;
   }
 
-  const users = getUsers();
-  const matchedUser = users.find(user => user.email.toLowerCase() === email.toLowerCase());
-
-  if (!matchedUser || matchedUser.password !== password) {
-    alert("Invalid email or password. Please use the demo login details shown on screen.");
-    return;
+  try {
+    await authApi.login(email.toLowerCase(), password);
+    showPage("home");
+  } catch (error) {
+    alert(error.message || "Login failed.");
   }
-
-  setSession(matchedUser);
-  showPage("home");
 }
 
-function handleSignup() {
+async function handleSignup() {
   const firstName = document.getElementById("signupFirstName").value.trim();
   const lastName = document.getElementById("signupLastName").value.trim();
   const email = document.getElementById("signupEmail").value.trim();
@@ -840,29 +993,15 @@ function handleSignup() {
     return;
   }
 
-  const users = getUsers();
-  const exists = users.some(user => user.email.toLowerCase() === email.toLowerCase());
-
-  if (exists) {
-    alert("An account with this email already exists. Please sign in instead.");
-    return;
+  try {
+    await authApi.signup({ firstName, lastName, email, password });
+    showPage("home");
+  } catch (error) {
+    alert(error.message || "Sign up failed.");
   }
-
-  const user = {
-    firstName,
-    lastName,
-    name: `${firstName} ${lastName}`,
-    email,
-    password
-  };
-
-  users.push(user);
-  saveUsers(users);
-  setSession(user);
-  showPage("home");
 }
 
-function handlePasswordReset() {
+async function handlePasswordReset() {
   const email = document.getElementById("resetEmail").value.trim();
   const password = document.getElementById("resetPassword").value.trim();
   const confirmPassword = document.getElementById("resetConfirmPassword").value.trim();
@@ -877,20 +1016,35 @@ function handlePasswordReset() {
     return;
   }
 
-  const users = getUsers();
-  const index = users.findIndex(user => user.email.toLowerCase() === email.toLowerCase());
+  try {
+    await authApi.resetPassword(email, password);
+    alert("Password reset successful. Please sign in with your new password.");
+    showPage("login");
+  } catch (error) {
+    alert(error.message || "Password reset failed.");
+  }
+}
 
-  if (index === -1) {
-    alert("No account exists for that email address.");
+async function saveProfile() {
+  const user = getSessionUser();
+  if (!user) {
+    alert("You need to be signed in to update your profile.");
+    showPage("login");
     return;
   }
 
-  users[index].password = password;
-  users[index].name = users[index].name || `${users[index].firstName || ""} ${users[index].lastName || ""}`.trim();
-  saveUsers(users);
+  const firstName = document.getElementById("profileFirstName").value.trim();
+  const lastName = document.getElementById("profileLastName").value.trim();
+  const email = document.getElementById("profileEmail").value.trim();
 
-  alert("Password reset successful. Please sign in with your new password.");
-  showPage("login");
+  try {
+    const updated = await authApi.updateProfile({ firstName, lastName, email });
+    alert("Profile updated successfully.");
+    setSession(updated);
+    showPage("account");
+  } catch (error) {
+    alert(error.message || "Profile update failed.");
+  }
 }
 
 function openService(service) {
@@ -942,11 +1096,7 @@ function createTicket() {
 
 if (isLoggedIn()) {
   const sessionUser = getSessionUser();
-  if (sessionUser) {
-    currentPage = "home";
-  } else {
-    currentPage = "login";
-  }
+  currentPage = sessionUser ? "home" : "login";
 } else {
   currentPage = "login";
 }
