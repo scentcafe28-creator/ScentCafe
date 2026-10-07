@@ -10,6 +10,7 @@ const PORT = process.env.PORT || 3000;
 const ROOT_DIR = __dirname;
 const DATA_DIR = path.join(ROOT_DIR, 'data');
 const STORE_PATH = path.join(DATA_DIR, 'store.json');
+const VALID_TICKET_STATUSES = ['Received', 'In Progress', 'Awaiting Customer', 'Completed'];
 
 app.use(cors());
 app.use(express.json());
@@ -19,23 +20,38 @@ function isValidEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email).trim().toLowerCase());
 }
 
+function createDemoUser() {
+  return {
+    id: 'demo-user',
+    firstName: 'ScentCafe',
+    lastName: 'Customer',
+    name: 'ScentCafe Customer',
+    email: 'customer@scentcafe.com',
+    role: 'user',
+    password: bcrypt.hashSync('password123', 10)
+  };
+}
+
+function createAdminUser() {
+  return {
+    id: 'admin-user',
+    firstName: 'ScentCafe',
+    lastName: 'Admin',
+    name: 'ScentCafe Admin',
+    email: 'admin@scentcafe.com',
+    role: 'admin',
+    password: bcrypt.hashSync('admin123', 10)
+  };
+}
+
 function ensureDataFile() {
   if (!fs.existsSync(DATA_DIR)) {
     fs.mkdirSync(DATA_DIR, { recursive: true });
   }
 
   if (!fs.existsSync(STORE_PATH)) {
-    const demoUser = {
-      id: 'demo-user',
-      firstName: 'ScentCafe',
-      lastName: 'Customer',
-      name: 'ScentCafe Customer',
-      email: 'customer@scentcafe.com',
-      password: bcrypt.hashSync('password123', 10)
-    };
-
     const initialStore = {
-      users: [demoUser],
+      users: [createDemoUser(), createAdminUser()],
       sessions: {},
       tickets: []
     };
@@ -59,10 +75,21 @@ function readStore() {
     if (!parsed.sessions || typeof parsed.sessions !== 'object') parsed.sessions = {};
     if (!Array.isArray(parsed.tickets)) parsed.tickets = [];
 
+    const hasDemoUser = parsed.users.some((user) => user && user.email === 'customer@scentcafe.com');
+    const hasAdminUser = parsed.users.some((user) => user && user.email === 'admin@scentcafe.com');
+
+    if (!hasDemoUser) {
+      parsed.users.push(createDemoUser());
+    }
+
+    if (!hasAdminUser) {
+      parsed.users.push(createAdminUser());
+    }
+
     return parsed;
   } catch (error) {
     const recoveredStore = {
-      users: [],
+      users: [createDemoUser(), createAdminUser()],
       sessions: {},
       tickets: []
     };
@@ -89,6 +116,7 @@ function normalizeUser(user) {
     lastName: String(user.lastName || '').trim(),
     name: String(user.name || `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'User').trim(),
     email: String(user.email || '').trim().toLowerCase(),
+    role: user.role || 'user',
     password: user.password || ''
   };
 }
@@ -100,14 +128,17 @@ function sanitizeUser(user) {
 }
 
 function sanitizeTicket(ticket) {
+  if (!ticket) return null;
+
   return {
     number: ticket.number,
     name: ticket.name,
     phone: ticket.phone,
-    request: ticket.request,
+    request: ticket.request || ticket.message || '',
     service: ticket.service,
     status: ticket.status,
-    date: ticket.date
+    date: ticket.date,
+    ...(ticket.userEmail ? { userEmail: ticket.userEmail } : {})
   };
 }
 
@@ -145,6 +176,14 @@ function authMiddleware(req, res, next) {
   }
 
   req.user = user;
+  next();
+}
+
+function adminMiddleware(req, res, next) {
+  if (!req.user || req.user.role !== 'admin') {
+    return res.status(403).json({ message: 'Admin access required.' });
+  }
+
   next();
 }
 
@@ -290,7 +329,8 @@ app.put('/api/profile', authMiddleware, (req, res) => {
     lastName,
     name: `${firstName} ${lastName}`,
     email: normalizedEmail,
-    password: store.users[userIndex].password
+    password: store.users[userIndex].password,
+    role: store.users[userIndex].role || 'user'
   });
 
   store.users[userIndex] = updatedUser;
@@ -309,20 +349,22 @@ app.get('/api/requests', authMiddleware, (req, res) => {
 });
 
 app.post('/api/requests', authMiddleware, (req, res) => {
-  const { name, phone, request, service } = req.body || {};
+  const { name, phone, request, message, service } = req.body || {};
 
-  if (!name || !phone || !request) {
+  if (!name || !phone || !(request || message)) {
     return res.status(400).json({ message: 'Please complete all fields.' });
   }
 
   const store = readStore();
+  const requestText = String(request || message).trim();
   const number = `SC-${new Date().getFullYear()}-${String(store.tickets.filter((ticket) => ticket && ticket.userEmail === req.user.email).length + 1).padStart(4, '0')}`;
 
   const ticket = {
     number,
     name,
     phone,
-    request,
+    request: requestText,
+    message: requestText,
     service: service || 'ScentCafe Service',
     status: 'Received',
     userEmail: req.user.email,
@@ -332,7 +374,48 @@ app.post('/api/requests', authMiddleware, (req, res) => {
   store.tickets.push(ticket);
   writeStore(store);
 
-  res.status(201).json({ ticket });
+  res.status(201).json({ ticket: sanitizeTicket(ticket) });
+});
+
+app.get('/api/admin/requests', authMiddleware, adminMiddleware, (req, res) => {
+  const store = readStore();
+  res.json({ requests: store.tickets.map(sanitizeTicket) });
+});
+
+app.patch('/api/admin/requests/:number', authMiddleware, adminMiddleware, (req, res) => {
+  const { status } = req.body || {};
+  const { number } = req.params;
+
+  if (!status || !VALID_TICKET_STATUSES.includes(status)) {
+    return res.status(400).json({ message: 'A valid status is required.' });
+  }
+
+  const store = readStore();
+  const ticketIndex = store.tickets.findIndex((ticket) => ticket && ticket.number === number);
+
+  if (ticketIndex === -1) {
+    return res.status(404).json({ message: 'Ticket not found.' });
+  }
+
+  store.tickets[ticketIndex].status = status;
+  writeStore(store);
+
+  res.json({ ticket: sanitizeTicket(store.tickets[ticketIndex]) });
+});
+
+app.delete('/api/admin/requests/:number', authMiddleware, adminMiddleware, (req, res) => {
+  const { number } = req.params;
+  const store = readStore();
+  const ticketIndex = store.tickets.findIndex((ticket) => ticket && ticket.number === number);
+
+  if (ticketIndex === -1) {
+    return res.status(404).json({ message: 'Ticket not found.' });
+  }
+
+  const [removedTicket] = store.tickets.splice(ticketIndex, 1);
+  writeStore(store);
+
+  res.json({ message: 'Ticket removed successfully.', ticket: sanitizeTicket(removedTicket) });
 });
 
 app.get('*', (_, res) => {
@@ -342,3 +425,4 @@ app.get('*', (_, res) => {
 app.listen(PORT, () => {
   console.log(`ScentCafe backend is running at http://localhost:${PORT}`);
 });
+
