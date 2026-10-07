@@ -1,14 +1,382 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="ScentCafe digital services and customer app">
-<meta name="theme-color" content="#C9844B">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="ScentCafe">
-<link rel="manifest" href="./manifest.json">
-<link rel="icon" type="image/svg+xml" href="./favicon.svg">
-<link rel="apple-touch-icon" href="./icon-192.svg">
-<title>ScentCafe</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="ScentCafe digital services and customer app" />
+  <meta name="theme-color" content="#C9844B" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="ScentCafe" />
+  <link rel="manifest" href="./manifest.json" />
+  <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+  <link rel="apple-touch-icon" href="./icon-192.svg" />
+  <title>ScentCafe</title>
+  <style>
+    :root {
+      --bg: #07111f;
+      --panel: #0d1b2d;
+      --panel-2: #091626;
+      --line: #30455f;
+      --gold: #d4af37;
+      --text: #f3f4f6;
+      --muted: #b7c1cf;
+      --accent: #c9844b;
+    }
+
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 480px;
+      min-height: 100vh;
+      background: var(--bg);
+      padding: 18px 18px 90px;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0 16px;
+      border-bottom: 1px solid rgba(212, 175, 55, 0.5);
+      margin-bottom: 18px;
+    }
+
+    .brand {
+      font-size: 2.1rem;
+      font-weight: 800;
+      color: var(--gold);
+      letter-spacing: -0.04em;
+    }
+
+    .spark {
+      font-size: 1.7rem;
+      color: var(--gold);
+    }
+
+    .card {
+      background: rgba(13, 27, 45, 0.9);
+      border: 1px solid rgba(212, 175, 55, 0.5);
+      border-radius: 18px;
+      padding: 22px 18px;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.18);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(212, 175, 55, 0.12);
+      border: 1px solid rgba(212, 175, 55, 0.35);
+      color: var(--gold);
+      font-size: 12px;
+      margin-bottom: 12px;
+    }
+
+    h1, h2, h3, p { margin-top: 0; }
+
+    h1 {
+      font-size: clamp(2.2rem, 6vw, 4rem);
+      line-height: 0.95;
+      color: var(--gold);
+      margin-bottom: 18px;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size: 1.05rem;
+      line-height: 1.45;
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      margin-top: 18px;
+      margin-bottom: 8px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    input {
+      width: 100%;
+      background: var(--panel-2);
+      color: var(--text);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 14px 12px;
+      font-size: 1rem;
+      outline: none;
+    }
+
+    input:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 2px rgba(212,175,55,0.15);
+    }
+
+    button {
+      width: 100%;
+      border: none;
+      border-radius: 12px;
+      padding: 15px 18px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+
+    button:active { transform: scale(0.99); }
+
+    .primary {
+      background: var(--gold);
+      color: #0b1728;
+      margin-top: 18px;
+    }
+
+    .secondary {
+      background: transparent;
+      border: 1px solid var(--line);
+      color: var(--text);
+      margin-top: 12px;
+    }
+
+    .link {
+      display: inline-block;
+      margin-top: 14px;
+      background: none;
+      border: none;
+      color: var(--gold);
+      font-weight: 700;
+      width: auto;
+      padding: 0;
+    }
+
+    .demo-box {
+      margin-top: 18px;
+      background: rgba(9, 22, 38, 0.8);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px 14px;
+      color: var(--muted);
+      line-height: 1.6;
+      font-size: 0.9rem;
+    }
+
+    .cta {
+      margin-top: 28px;
+      font-size: 2.3rem;
+      font-weight: 800;
+      color: var(--gold);
+      line-height: 1.1;
+    }
+
+    .install-box {
+      margin-top: 18px;
+      background: rgba(13, 27, 45, 0.9);
+      border: 1px solid rgba(212,175,55,0.45);
+      border-radius: 14px;
+      padding: 14px;
+    }
+
+    .install-box .row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .install-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: grid;
+      place-items: center;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid var(--line);
+      font-size: 1.4rem;
+    }
+
+    .install-label {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .install-note {
+      color: var(--muted);
+      margin-top: 8px;
+      font-size: 0.92rem;
+    }
+
+    @media (min-width: 640px) {
+      body { padding: 24px 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="topbar">
+      <div class="brand">ScentCafe</div>
+      <div class="spark">✦</div>
+    </div>
+
+    <div id="app"></div>
+  </div>
+
+  <script>
+    const app = document.getElementById('app');
+    const demoUser = {
+      name: 'ScentCafe Customer',
+      email: 'customer@scentcafe.com',
+      password: 'password123'
+    };
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js', { scope: './' })
+        .then(() => console.log('Service worker registered'))
+        .catch((error) => console.log('Service worker registration failed:', error));
+    }
+
+    function renderLogin() {
+      app.innerHTML = `
+        <div class="card">
+          <div class="badge">Secure login</div>
+          <h1>Welcome back</h1>
+          <p class="subtitle">Sign in to manage your requests, services and account details.</p>
+
+          <label>Email address</label>
+          <input id="email" type="email" placeholder="name@example.com" />
+
+          <label>Password</label>
+          <input id="password" type="password" placeholder="Enter your password" />
+
+          <button class="primary" id="loginBtn">Sign In</button>
+
+          <button class="secondary" id="signupBtn">Create account</button>
+
+          <div class="demo-box">
+            Demo login:<br>
+            Email: customer@scentcafe.com<br>
+            Password: password123
+          </div>
+        </div>
+      `;
+
+      document.getElementById('loginBtn').addEventListener('click', () => {
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value.trim();
+
+        if (email === demoUser.email && password === demoUser.password) {
+          localStorage.setItem('scentcafe_session', JSON.stringify(demoUser));
+          renderHome();
+        } else {
+          alert('Invalid email or password. Use the demo credentials shown above.');
+        }
+      });
+
+      document.getElementById('signupBtn').addEventListener('click', () => {
+        renderSignup();
+      });
+    }
+
+    function renderSignup() {
+      app.innerHTML = `
+        <div class="card">
+          <div class="badge">Create account</div>
+          <h1>Join ScentCafe</h1>
+          <p class="subtitle">Register to access services and manage your requests.</p>
+
+          <label>First name</label>
+          <input id="firstName" placeholder="First name" />
+
+          <label>Last name</label>
+          <input id="lastName" placeholder="Last name" />
+
+          <label>Email address</label>
+          <input id="newEmail" type="email" placeholder="name@example.com" />
+
+          <label>Password</label>
+          <input id="newPassword" type="password" placeholder="Create a password" />
+
+          <button class="primary" id="createBtn">Create account</button>
+          <button class="secondary" id="backBtn">Back to sign in</button>
+        </div>
+      `;
+
+      document.getElementById('createBtn').addEventListener('click', () => {
+        const firstName = document.getElementById('firstName').value.trim();
+        const lastName = document.getElementById('lastName').value.trim();
+        const email = document.getElementById('newEmail').value.trim();
+        const password = document.getElementById('newPassword').value.trim();
+
+        if (!firstName || !lastName || !email || !password) {
+          alert('Please fill in all fields.');
+          return;
+        }
+
+        const user = { name: `${firstName} ${lastName}`, email, password };
+        localStorage.setItem('scentcafe_session', JSON.stringify(user));
+        renderHome();
+      });
+
+      document.getElementById('backBtn').addEventListener('click', renderLogin);
+    }
+
+    function renderHome() {
+      const user = JSON.parse(localStorage.getItem('scentcafe_session') || '{}');
+      app.innerHTML = `
+        <div>
+          <div class="card" style="margin-bottom:18px;">
+            <h2 style="margin-bottom:8px; color: var(--gold);">Welcome to ScentCafe</h2>
+            <p class="subtitle">Hello ${user.name || 'there'}! Your digital service centre.</p>
+            <button class="primary" id="requestBtn">Make a request</button>
+          </div>
+
+          <div class="cta">Install and create shortcut</div>
+
+          <div class="install-box">
+            <div class="row">
+              <div class="install-icon">G</div>
+              <div>
+                <div class="install-label">Install</div>
+                <div class="install-note">This app can be installed from Chrome.</div>
+              </div>
+            </div>
+          </div>
+
+          <button class="secondary" id="logoutBtn">Sign out</button>
+        </div>
+      `;
+
+      document.getElementById('requestBtn').addEventListener('click', () => {
+        alert('Request flow is ready to connect to your backend or service API.');
+      });
+
+      document.getElementById('logoutBtn').addEventListener('click', () => {
+        localStorage.removeItem('scentcafe_session');
+        renderLogin();
+      });
+    }
+
+    const session = localStorage.getItem('scentcafe_session');
+    if (session) {
+      renderHome();
+    } else {
+      renderLogin();
+    }
+  </script>
+</body>
+</html>
