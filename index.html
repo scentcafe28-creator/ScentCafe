@@ -166,6 +166,46 @@ button {
   margin-top: 10px;
 }
 
+.auth-card {
+  background: #0d1b2d;
+  border: 1px solid #d4af37;
+  border-radius: 18px;
+  padding: 24px 18px;
+  margin-top: 20px;
+}
+
+.auth-badge {
+  display: inline-block;
+  background: rgba(212, 175, 55, 0.15);
+  color: #d4af37;
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  border-radius: 999px;
+  padding: 7px 12px;
+  font-size: 12px;
+  margin-bottom: 12px;
+}
+
+.demo-credentials {
+  margin-top: 14px;
+  padding: 12px;
+  border-radius: 10px;
+  background: #091626;
+  border: 1px solid #30455f;
+  color: #c8ced8;
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.link-btn {
+  display: inline-block;
+  margin-top: 12px;
+  color: #d4af37;
+  background: none;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+}
+
 .ticket {
   background: #0d1b2d;
   border: 1px solid #263b55;
@@ -359,19 +399,87 @@ label {
 
 <script>
 
-let currentPage = "home";
+let currentPage = "login";
+
+const STORAGE_KEYS = {
+  users: "scentcafeUsers",
+  session: "scentcafeSession",
+  loggedIn: "scentcafeLoggedIn",
+  tickets: "scentcafeTickets"
+};
+
+function getUsers() {
+  const raw = localStorage.getItem(STORAGE_KEYS.users);
+  if (!raw) {
+    const demoUser = {
+      firstName: "ScentCafe",
+      lastName: "Customer",
+      name: "ScentCafe Customer",
+      email: "customer@scentcafe.com",
+      password: "password123"
+    };
+    localStorage.setItem(STORAGE_KEYS.users, JSON.stringify([demoUser]));
+    return [demoUser];
+  }
+
+  try {
+    return JSON.parse(raw);
+  } catch (error) {
+    return [];
+  }
+}
+
+function saveUsers(users) {
+  localStorage.setItem(STORAGE_KEYS.users, JSON.stringify(users));
+}
+
+function getSessionUser() {
+  const raw = localStorage.getItem(STORAGE_KEYS.session);
+  if (!raw) return null;
+
+  try {
+    return JSON.parse(raw);
+  } catch (error) {
+    return null;
+  }
+}
+
+function isLoggedIn() {
+  return localStorage.getItem(STORAGE_KEYS.loggedIn) === "true";
+}
+
+function setSession(user) {
+  localStorage.setItem(STORAGE_KEYS.session, JSON.stringify(user));
+  localStorage.setItem(STORAGE_KEYS.loggedIn, "true");
+}
+
+function logout() {
+  localStorage.removeItem(STORAGE_KEYS.loggedIn);
+  localStorage.removeItem(STORAGE_KEYS.session);
+  showPage("login");
+}
 
 function getTickets() {
-  return JSON.parse(localStorage.getItem("scentcafeTickets") || "[]");
+  return JSON.parse(localStorage.getItem(STORAGE_KEYS.tickets) || "[]");
 }
 
 function saveTickets(tickets) {
-  localStorage.setItem("scentcafeTickets", JSON.stringify(tickets));
+  localStorage.setItem(STORAGE_KEYS.tickets, JSON.stringify(tickets));
 }
 
 function showPage(page) {
+  const allowedPublicPages = ["login", "signup", "forgot"];
+
+  if (!isLoggedIn() && !allowedPublicPages.includes(page)) {
+    page = "login";
+  }
 
   currentPage = page;
+
+  const nav = document.querySelector(".bottom-nav");
+  if (nav) {
+    nav.style.display = allowedPublicPages.includes(page) ? "none" : "flex";
+  }
 
   document.querySelectorAll(".nav-btn").forEach(btn => {
     btn.classList.remove("active");
@@ -397,32 +505,121 @@ function showPage(page) {
 }
 
 function render() {
-
   const app = document.getElementById("app");
 
-  if (currentPage === "home") {
-
+  if (currentPage === "login") {
     app.innerHTML = `
-
       <div class="page">
+        <div class="auth-card">
+          <span class="auth-badge">Secure login</span>
+          <h1 class="gold" style="margin-bottom:10px;">Welcome back</h1>
+          <p style="color:#c8ced8;line-height:1.5;">
+            Sign in to manage your requests, services and account details.
+          </p>
 
+          <label style="display:block;margin-top:20px;">Email address</label>
+          <input id="loginEmail" type="email" placeholder="name@example.com">
+
+          <label>Password</label>
+          <input id="loginPassword" type="password" placeholder="Enter your password">
+
+          <button class="primary-btn" onclick="handleLogin()">Sign In</button>
+
+          <button class="link-btn" onclick="showPage('signup')">Create account</button>
+          <br>
+          <button class="link-btn" onclick="showPage('forgot')">Forgot password?</button>
+
+          <div class="demo-credentials">
+            Demo login:<br>
+            Email: customer@scentcafe.com<br>
+            Password: password123
+          </div>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  if (currentPage === "signup") {
+    app.innerHTML = `
+      <div class="page">
+        <div class="auth-card">
+          <span class="auth-badge">Create account</span>
+          <h1 class="gold" style="margin-bottom:10px;">Join ScentCafe</h1>
+          <p style="color:#c8ced8;line-height:1.5;">
+            Register to access services and manage your requests.
+          </p>
+
+          <label style="display:block;margin-top:20px;">First name</label>
+          <input id="signupFirstName" type="text" placeholder="First name">
+
+          <label>Last name</label>
+          <input id="signupLastName" type="text" placeholder="Last name">
+
+          <label>Email address</label>
+          <input id="signupEmail" type="email" placeholder="name@example.com">
+
+          <label>Password</label>
+          <input id="signupPassword" type="password" placeholder="Create a password">
+
+          <label>Confirm password</label>
+          <input id="signupConfirmPassword" type="password" placeholder="Confirm your password">
+
+          <button class="primary-btn" onclick="handleSignup()">Create Account</button>
+
+          <button class="link-btn" onclick="showPage('login')">Already have an account? Sign in</button>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  if (currentPage === "forgot") {
+    app.innerHTML = `
+      <div class="page">
+        <div class="auth-card">
+          <span class="auth-badge">Reset password</span>
+          <h1 class="gold" style="margin-bottom:10px;">Forgot your password?</h1>
+          <p style="color:#c8ced8;line-height:1.5;">
+            Enter your email and choose a new password.
+          </p>
+
+          <label style="display:block;margin-top:20px;">Email address</label>
+          <input id="resetEmail" type="email" placeholder="name@example.com">
+
+          <label>New password</label>
+          <input id="resetPassword" type="password" placeholder="New password">
+
+          <label>Confirm new password</label>
+          <input id="resetConfirmPassword" type="password" placeholder="Confirm new password">
+
+          <button class="primary-btn" onclick="handlePasswordReset()">Reset Password</button>
+
+          <button class="link-btn" onclick="showPage('login')">Back to sign in</button>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  const user = getSessionUser();
+
+  if (currentPage === "home") {
+    app.innerHTML = `
+      <div class="page">
         <div class="hero">
           <h1>Welcome to ScentCafe</h1>
           <p>
-            Your digital service centre. Get assistance with
+            Hello ${user ? user.firstName || user.name.split(" ")[0] : "there"}! Your digital service centre. Get assistance with
             government services, jobs, CVs, education and applications.
           </p>
 
-          <button class="primary-btn"
-            onclick="openRequest()">
-            Make a Request
-          </button>
+          <button class="primary-btn" onclick="openRequest()">Make a Request</button>
         </div>
 
         <h2 class="section-title">Our Services</h2>
 
         <div class="grid">
-
           <div class="card" onclick="showPage('government')">
             <div class="card-icon">🏛️</div>
             <h3>Government</h3>
@@ -446,37 +643,25 @@ function render() {
             <h3>Applications</h3>
             <p>Help with online applications.</p>
           </div>
-
         </div>
 
         <h2 class="section-title">My Requests</h2>
-
         <div class="card" onclick="showPage('requests')">
           <div class="card-icon">📋</div>
           <h3>Track My Requests</h3>
           <p>View your submitted requests and ticket numbers.</p>
         </div>
-
       </div>
-
     `;
-
   }
 
   else if (currentPage === "services") {
-
     app.innerHTML = `
-
       <div class="page">
-
         <h1 class="gold">Services</h1>
-
-        <p style="color:#9fa9b7;margin:10px 0 20px;">
-          Select a service and create a request.
-        </p>
+        <p style="color:#9fa9b7;margin:10px 0 20px;">Select a service and create a request.</p>
 
         <div class="service-list">
-
           <div class="service" onclick="openService('Government Services')">
             <strong>🏛️ Government Services</strong>
             <span>Assistance with government-related services.</span>
@@ -496,361 +681,252 @@ function render() {
             <strong>📄 Applications</strong>
             <span>Help with online forms and applications.</span>
           </div>
-
         </div>
-
       </div>
-
     `;
-
   }
 
   else if (currentPage === "government") {
-
     app.innerHTML = `
-
       <div class="page">
-
-        <div class="back" onclick="showPage('services')">
-          ← Back
-        </div>
-
+        <div class="back" onclick="showPage('services')">← Back</div>
         <h1 class="gold">Government Services</h1>
-
-        <p style="color:#9fa9b7;margin:10px 0 20px;">
-          Choose the government service you need help with.
-        </p>
+        <p style="color:#9fa9b7;margin:10px 0 20px;">Choose the government service you need help with.</p>
 
         <div class="service-list">
-
-          <div class="service" onclick="openService('SASSA Assistance')">
-            <strong>SASSA Assistance</strong>
-            <span>Help with SASSA-related applications.</span>
-          </div>
-
-          <div class="service" onclick="openService('Home Affairs')">
-            <strong>Home Affairs</strong>
-            <span>Assistance with Home Affairs services.</span>
-          </div>
-
-          <div class="service" onclick="openService('SARS')">
-            <strong>SARS</strong>
-            <span>Tax and SARS assistance.</span>
-          </div>
-
-          <div class="service" onclick="openService('PSIRA')">
-            <strong>PSIRA</strong>
-            <span>PSIRA application assistance.</span>
-          </div>
-
-          <div class="service" onclick="openService('NSFAS')">
-            <strong>NSFAS</strong>
-            <span>NSFAS application and student funding assistance.</span>
-          </div>
-
-          <div class="service" onclick="openService('CIPC / BizPortal')">
-            <strong>CIPC / BizPortal</strong>
-            <span>Business registration assistance.</span>
-          </div>
-
-          <div class="service" onclick="openService('Other Government Service')">
-            <strong>Other Government Service</strong>
-            <span>Request assistance with another service.</span>
-          </div>
-
+          <div class="service" onclick="openService('SASSA Assistance')"><strong>SASSA Assistance</strong><span>Help with SASSA-related applications.</span></div>
+          <div class="service" onclick="openService('Home Affairs')"><strong>Home Affairs</strong><span>Assistance with Home Affairs services.</span></div>
+          <div class="service" onclick="openService('SARS')"><strong>SARS</strong><span>Tax and SARS assistance.</span></div>
+          <div class="service" onclick="openService('PSIRA')"><strong>PSIRA</strong><span>PSIRA application assistance.</span></div>
+          <div class="service" onclick="openService('NSFAS')"><strong>NSFAS</strong><span>NSFAS application and student funding assistance.</span></div>
+          <div class="service" onclick="openService('CIPC / BizPortal')"><strong>CIPC / BizPortal</strong><span>Business registration assistance.</span></div>
+          <div class="service" onclick="openService('Other Government Service')"><strong>Other Government Service</strong><span>Request assistance with another service.</span></div>
         </div>
-
       </div>
-
     `;
-
   }
 
   else if (currentPage === "jobs") {
-
     app.innerHTML = `
-
       <div class="page">
-
-        <div class="back" onclick="showPage('services')">
-          ← Back
-        </div>
-
+        <div class="back" onclick="showPage('services')">← Back</div>
         <h1 class="gold">Jobs & CVs</h1>
-
         <div class="service-list" style="margin-top:20px;">
-
-          <div class="service" onclick="openService('CV Creation')">
-            <strong>📄 CV Creation</strong>
-            <span>Create or improve your CV.</span>
-          </div>
-
-          <div class="service" onclick="openService('Job Application')">
-            <strong>💼 Job Application</strong>
-            <span>Get assistance applying for jobs.</span>
-          </div>
-
-          <div class="service" onclick="openService('Job Search')">
-            <strong>🔎 Job Search</strong>
-            <span>Get help finding suitable opportunities.</span>
-          </div>
-
+          <div class="service" onclick="openService('CV Creation')"><strong>📄 CV Creation</strong><span>Create or improve your CV.</span></div>
+          <div class="service" onclick="openService('Job Application')"><strong>💼 Job Application</strong><span>Get assistance applying for jobs.</span></div>
+          <div class="service" onclick="openService('Job Search')"><strong>🔎 Job Search</strong><span>Get help finding suitable opportunities.</span></div>
         </div>
-
       </div>
-
     `;
-
   }
 
   else if (currentPage === "education") {
-
     app.innerHTML = `
-
       <div class="page">
-
-        <div class="back" onclick="showPage('services')">
-          ← Back
-        </div>
-
+        <div class="back" onclick="showPage('services')">← Back</div>
         <h1 class="gold">Education</h1>
-
         <div class="service-list" style="margin-top:20px;">
-
-          <div class="service" onclick="openService('University Application')">
-            <strong>🎓 University Application</strong>
-            <span>Assistance with university applications.</span>
-          </div>
-
-          <div class="service" onclick="openService('College Application')">
-            <strong>🏫 College Application</strong>
-            <span>Assistance with college applications.</span>
-          </div>
-
-          <div class="service" onclick="openService('School Admission')">
-            <strong>📚 School Admission</strong>
-            <span>Help with school admission applications.</span>
-          </div>
-
+          <div class="service" onclick="openService('University Application')"><strong>🎓 University Application</strong><span>Assistance with university applications.</span></div>
+          <div class="service" onclick="openService('College Application')"><strong>🏫 College Application</strong><span>Assistance with college applications.</span></div>
+          <div class="service" onclick="openService('School Admission')"><strong>📚 School Admission</strong><span>Help with school admission applications.</span></div>
         </div>
-
       </div>
-
     `;
-
   }
 
   else if (currentPage === "applications") {
-
     app.innerHTML = `
-
       <div class="page">
-
-        <div class="back" onclick="showPage('services')">
-          ← Back
-        </div>
-
+        <div class="back" onclick="showPage('services')">← Back</div>
         <h1 class="gold">Applications</h1>
-
         <div class="service-list" style="margin-top:20px;">
-
-          <div class="service" onclick="openService('Online Application')">
-            <strong>📝 Online Application</strong>
-            <span>Get help completing an online application.</span>
-          </div>
-
-          <div class="service" onclick="openService('Document Assistance')">
-            <strong>📁 Document Assistance</strong>
-            <span>Help preparing documents for applications.</span>
-          </div>
-
-          <div class="service" onclick="openService('Other Application')">
-            <strong>📋 Other Application</strong>
-            <span>Request assistance with another application.</span>
-          </div>
-
+          <div class="service" onclick="openService('Online Application')"><strong>📝 Online Application</strong><span>Get help completing an online application.</span></div>
+          <div class="service" onclick="openService('Document Assistance')"><strong>📁 Document Assistance</strong><span>Help preparing documents for applications.</span></div>
+          <div class="service" onclick="openService('Other Application')"><strong>📋 Other Application</strong><span>Request assistance with another application.</span></div>
         </div>
-
       </div>
-
     `;
-
   }
 
   else if (currentPage === "requests") {
-
     const tickets = getTickets();
-
     let content = "";
 
     if (tickets.length === 0) {
-
       content = `
         <div class="empty">
           <div style="font-size:45px;">📋</div>
           <h3>No requests yet</h3>
-          <p style="margin-top:8px;">
-            Your submitted requests will appear here.
-          </p>
-
-          <button class="primary-btn"
-            onclick="openRequest()">
-            Create Request
-          </button>
+          <p style="margin-top:8px;">Your submitted requests will appear here.</p>
+          <button class="primary-btn" onclick="openRequest()">Create Request</button>
         </div>
       `;
-
     } else {
-
       tickets.reverse().forEach(ticket => {
-
         content += `
-
           <div class="ticket">
-
-            <div class="ticket-number">
-              ${ticket.number}
-            </div>
-
+            <div class="ticket-number">${ticket.number}</div>
             <strong>${ticket.service}</strong>
-
-            <p style="color:#9fa9b7;margin-top:7px;">
-              ${ticket.request}
-            </p>
-
-            <span class="ticket-status">
-              ${ticket.status}
-            </span>
-
+            <p style="color:#9fa9b7;margin-top:7px;">${ticket.request}</p>
+            <span class="ticket-status">${ticket.status}</span>
           </div>
-
         `;
-
       });
-
     }
 
     app.innerHTML = `
-
       <div class="page">
-
         <h1 class="gold">My Requests</h1>
-
-        <p style="color:#9fa9b7;margin:10px 0 20px;">
-          Track your ScentCafe requests.
-        </p>
-
+        <p style="color:#9fa9b7;margin:10px 0 20px;">Track your ScentCafe requests.</p>
         ${content}
-
       </div>
-
     `;
-
   }
 
   else if (currentPage === "account") {
-
     app.innerHTML = `
-
       <div class="page">
-
         <h1 class="gold">My Account</h1>
 
         <div class="hero" style="margin-top:20px;">
-
           <div style="font-size:50px;">👤</div>
-
-          <h2 style="margin-top:12px;">
-            ScentCafe Customer
-          </h2>
-
-          <p style="margin-top:8px;">
-            Your account and service requests.
-          </p>
-
+          <h2 style="margin-top:12px;">${user ? user.name : "ScentCafe Customer"}</h2>
+          <p style="margin-top:8px;">${user ? user.email : "customer@scentcafe.com"}</p>
         </div>
 
-        <button class="primary-btn"
-          onclick="openRequest()">
-          Make a Request
-        </button>
-
-        <button class="secondary-btn"
-          onclick="showPage('requests')">
-          View My Requests
-        </button>
-
+        <button class="primary-btn" onclick="openRequest()">Make a Request</button>
+        <button class="secondary-btn" onclick="showPage('requests')">View My Requests</button>
+        <button class="secondary-btn" onclick="logout()">Sign Out</button>
       </div>
-
     `;
+  }
+}
 
+function handleLogin() {
+  const email = document.getElementById("loginEmail").value.trim();
+  const password = document.getElementById("loginPassword").value.trim();
+
+  if (!email || !password) {
+    alert("Please enter both email and password.");
+    return;
   }
 
+  const users = getUsers();
+  const matchedUser = users.find(user => user.email.toLowerCase() === email.toLowerCase());
+
+  if (!matchedUser || matchedUser.password !== password) {
+    alert("Invalid email or password. Please use the demo login details shown on screen.");
+    return;
+  }
+
+  setSession(matchedUser);
+  showPage("home");
+}
+
+function handleSignup() {
+  const firstName = document.getElementById("signupFirstName").value.trim();
+  const lastName = document.getElementById("signupLastName").value.trim();
+  const email = document.getElementById("signupEmail").value.trim();
+  const password = document.getElementById("signupPassword").value.trim();
+  const confirmPassword = document.getElementById("signupConfirmPassword").value.trim();
+
+  if (!firstName || !lastName || !email || !password || !confirmPassword) {
+    alert("Please fill in all fields.");
+    return;
+  }
+
+  if (password !== confirmPassword) {
+    alert("Passwords do not match.");
+    return;
+  }
+
+  const users = getUsers();
+  const exists = users.some(user => user.email.toLowerCase() === email.toLowerCase());
+
+  if (exists) {
+    alert("An account with this email already exists. Please sign in instead.");
+    return;
+  }
+
+  const user = {
+    firstName,
+    lastName,
+    name: `${firstName} ${lastName}`,
+    email,
+    password
+  };
+
+  users.push(user);
+  saveUsers(users);
+  setSession(user);
+  showPage("home");
+}
+
+function handlePasswordReset() {
+  const email = document.getElementById("resetEmail").value.trim();
+  const password = document.getElementById("resetPassword").value.trim();
+  const confirmPassword = document.getElementById("resetConfirmPassword").value.trim();
+
+  if (!email || !password || !confirmPassword) {
+    alert("Please complete all fields.");
+    return;
+  }
+
+  if (password !== confirmPassword) {
+    alert("Passwords do not match.");
+    return;
+  }
+
+  const users = getUsers();
+  const index = users.findIndex(user => user.email.toLowerCase() === email.toLowerCase());
+
+  if (index === -1) {
+    alert("No account exists for that email address.");
+    return;
+  }
+
+  users[index].password = password;
+  users[index].name = users[index].name || `${users[index].firstName || ""} ${users[index].lastName || ""}`.trim();
+  saveUsers(users);
+
+  alert("Password reset successful. Please sign in with your new password.");
+  showPage("login");
 }
 
 function openService(service) {
-
   document.getElementById("requestModal").style.display = "flex";
-
-  document.getElementById("customerRequest").value =
-    "I need assistance with " + service + ".";
-
+  document.getElementById("customerRequest").value = "I need assistance with " + service + ".";
 }
 
 function openRequest() {
-
   document.getElementById("requestModal").style.display = "flex";
-
 }
 
 function closeRequest() {
-
   document.getElementById("requestModal").style.display = "none";
-
 }
 
 function createTicket() {
-
-  const name =
-    document.getElementById("customerName").value.trim();
-
-  const phone =
-    document.getElementById("customerPhone").value.trim();
-
-  const request =
-    document.getElementById("customerRequest").value.trim();
+  const name = document.getElementById("customerName").value.trim();
+  const phone = document.getElementById("customerPhone").value.trim();
+  const request = document.getElementById("customerRequest").value.trim();
 
   if (!name || !phone || !request) {
-
     alert("Please complete all fields.");
-
     return;
   }
 
   const tickets = getTickets();
-
-  const number =
-    "SC-" +
-    new Date().getFullYear() +
-    "-" +
-    String(tickets.length + 1).padStart(4, "0");
+  const number = "SC-" + new Date().getFullYear() + "-" + String(tickets.length + 1).padStart(4, "0");
 
   tickets.push({
-
-    number: number,
-
-    name: name,
-
-    phone: phone,
-
-    request: request,
-
+    number,
+    name,
+    phone,
+    request,
     service: "ScentCafe Service",
-
     status: "Received",
-
     date: new Date().toLocaleString()
-
   });
 
   saveTickets(tickets);
@@ -860,17 +936,22 @@ function createTicket() {
   document.getElementById("customerRequest").value = "";
 
   closeRequest();
-
-  alert(
-    "Request submitted successfully!\n\n" +
-    "Your ticket number is: " + number
-  );
-
+  alert("Request submitted successfully!\n\nYour ticket number is: " + number);
   showPage("requests");
-
 }
 
-render();
+if (isLoggedIn()) {
+  const sessionUser = getSessionUser();
+  if (sessionUser) {
+    currentPage = "home";
+  } else {
+    currentPage = "login";
+  }
+} else {
+  currentPage = "login";
+}
+
+showPage(currentPage);
 
 </script>
 
