@@ -10,7 +10,6 @@ const PORT = process.env.PORT || 3000;
 const ROOT_DIR = __dirname;
 const DATA_DIR = path.join(ROOT_DIR, 'data');
 const STORE_PATH = path.join(DATA_DIR, 'store.json');
-const VALID_STATUSES = ['Received', 'In Progress', 'Awaiting Customer', 'Completed'];
 
 app.use(cors());
 app.use(express.json());
@@ -32,22 +31,11 @@ function ensureDataFile() {
       lastName: 'Customer',
       name: 'ScentCafe Customer',
       email: 'customer@scentcafe.com',
-      password: bcrypt.hashSync('password123', 10),
-      role: 'customer'
-    };
-
-    const adminUser = {
-      id: 'admin-user',
-      firstName: 'ScentCafe',
-      lastName: 'Admin',
-      name: 'ScentCafe Admin',
-      email: 'admin@scentcafe.com',
-      password: bcrypt.hashSync('admin123', 10),
-      role: 'admin'
+      password: bcrypt.hashSync('password123', 10)
     };
 
     const initialStore = {
-      users: [demoUser, adminUser],
+      users: [demoUser],
       sessions: {},
       tickets: []
     };
@@ -101,8 +89,7 @@ function normalizeUser(user) {
     lastName: String(user.lastName || '').trim(),
     name: String(user.name || `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'User').trim(),
     email: String(user.email || '').trim().toLowerCase(),
-    password: user.password || '',
-    role: String(user.role || 'customer').trim() || 'customer'
+    password: user.password || ''
   };
 }
 
@@ -120,8 +107,7 @@ function sanitizeTicket(ticket) {
     request: ticket.request,
     service: ticket.service,
     status: ticket.status,
-    date: ticket.date,
-    userEmail: ticket.userEmail || null
+    date: ticket.date
   };
 }
 
@@ -159,14 +145,6 @@ function authMiddleware(req, res, next) {
   }
 
   req.user = user;
-  next();
-}
-
-function isAdmin(req, res, next) {
-  if (!req.user || req.user.role !== 'admin') {
-    return res.status(403).json({ message: 'Admin access required.' });
-  }
-
   next();
 }
 
@@ -212,8 +190,7 @@ app.post('/api/signup', (req, res) => {
     lastName,
     name: `${firstName} ${lastName}`,
     email: normalizedEmail,
-    password: bcrypt.hashSync(password, 10),
-    role: 'customer'
+    password: bcrypt.hashSync(password, 10)
   });
 
   store.users.push(user);
@@ -313,8 +290,7 @@ app.put('/api/profile', authMiddleware, (req, res) => {
     lastName,
     name: `${firstName} ${lastName}`,
     email: normalizedEmail,
-    password: store.users[userIndex].password,
-    role: store.users[userIndex].role || 'customer'
+    password: store.users[userIndex].password
   });
 
   store.users[userIndex] = updatedUser;
@@ -340,8 +316,7 @@ app.post('/api/requests', authMiddleware, (req, res) => {
   }
 
   const store = readStore();
-  const userTickets = store.tickets.filter((ticket) => ticket && ticket.userEmail === req.user.email);
-  const number = `SC-${new Date().getFullYear()}-${String(userTickets.length + 1).padStart(4, '0')}`;
+  const number = `SC-${new Date().getFullYear()}-${String(store.tickets.filter((ticket) => ticket && ticket.userEmail === req.user.email).length + 1).padStart(4, '0')}`;
 
   const ticket = {
     number,
@@ -358,48 +333,6 @@ app.post('/api/requests', authMiddleware, (req, res) => {
   writeStore(store);
 
   res.status(201).json({ ticket });
-});
-
-app.get('/api/admin/requests', authMiddleware, isAdmin, (req, res) => {
-  const store = readStore();
-  const requests = (store.tickets || []).map(sanitizeTicket);
-  res.json({ requests });
-});
-
-app.patch('/api/admin/requests/:number', authMiddleware, isAdmin, (req, res) => {
-  const { number } = req.params;
-  const { status } = req.body || {};
-
-  if (!status || !VALID_STATUSES.includes(status)) {
-    return res.status(400).json({ message: 'A valid status is required.' });
-  }
-
-  const store = readStore();
-  const index = store.tickets.findIndex((ticket) => ticket.number === number);
-
-  if (index === -1) {
-    return res.status(404).json({ message: 'Ticket not found.' });
-  }
-
-  store.tickets[index].status = status;
-  writeStore(store);
-
-  res.json({ ticket: sanitizeTicket(store.tickets[index]) });
-});
-
-app.delete('/api/admin/requests/:number', authMiddleware, isAdmin, (req, res) => {
-  const { number } = req.params;
-  const store = readStore();
-  const index = store.tickets.findIndex((ticket) => ticket.number === number);
-
-  if (index === -1) {
-    return res.status(404).json({ message: 'Ticket not found.' });
-  }
-
-  const [removed] = store.tickets.splice(index, 1);
-  writeStore(store);
-
-  res.json({ message: 'Ticket removed successfully.', ticket: sanitizeTicket(removed) });
 });
 
 app.get('*', (_, res) => {
