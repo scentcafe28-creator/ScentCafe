@@ -23,6 +23,8 @@
       --muted: #b7c1cf;
       --accent: #c9844b;
       --danger: #ff6b6b;
+      --success: #4cd7a2;
+      --shadow: rgba(0,0,0,0.18);
     }
 
     * { box-sizing: border-box; }
@@ -75,7 +77,7 @@
       border: 1px solid rgba(212, 175, 55, 0.5);
       border-radius: 18px;
       padding: 22px 18px;
-      box-shadow: 0 8px 18px rgba(0,0,0,0.18);
+      box-shadow: 0 8px 18px var(--shadow);
     }
 
     .badge {
@@ -182,12 +184,12 @@
       line-height: 1.1;
     }
 
-    .install-box {
+    .install-box, .request-box, .profile-box, .notification-box {
       margin-top: 18px;
       background: rgba(13, 27, 45, 0.9);
       border: 1px solid rgba(212,175,55,0.45);
-      border-radius: 14px;
-      padding: 14px;
+      border-radius: 16px;
+      padding: 18px;
     }
 
     .install-box .row {
@@ -219,26 +221,49 @@
       font-size: 0.92rem;
     }
 
-    .request-box {
-      margin-top: 18px;
-      background: rgba(13, 27, 45, 0.9);
-      border: 1px solid rgba(212,175,55,0.45);
-      border-radius: 16px;
-      padding: 18px;
-    }
-
-    .request-list {
+    .request-list, .notification-list, .category-grid {
       margin-top: 18px;
       display: flex;
       flex-direction: column;
       gap: 12px;
     }
 
-    .request-item {
+    .category-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .request-item, .notification-item, .category-card {
       background: rgba(9, 22, 38, 0.8);
       border: 1px solid var(--line);
       border-radius: 12px;
       padding: 12px 14px;
+    }
+
+    .category-card {
+      cursor: pointer;
+      min-height: 120px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .category-icon {
+      font-size: 1.7rem;
+      margin-bottom: 8px;
+    }
+
+    .category-card h4 {
+      margin: 0 0 5px;
+      color: var(--gold);
+    }
+
+    .category-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.85rem;
+      line-height: 1.5;
     }
 
     .status {
@@ -250,6 +275,73 @@
       color: var(--gold);
       font-size: 12px;
       font-weight: 700;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 26px;
+      min-height: 26px;
+      border-radius: 999px;
+      padding: 4px 8px;
+      background: rgba(212,175,55,0.14);
+      color: var(--gold);
+      font-weight: 800;
+      margin-left: 8px;
+    }
+
+    .summary-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      color: var(--muted);
+    }
+
+    .toggle {
+      width: 44px;
+      min-width: 44px;
+      height: 24px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid var(--line);
+      position: relative;
+      cursor: pointer;
+      padding: 0;
+      margin: 0;
+    }
+
+    .toggle::after {
+      content: "";
+      position: absolute;
+      top: 2px;
+      left: 3px;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #fff;
+      transition: transform 0.2s ease;
+    }
+
+    .toggle.on {
+      background: rgba(76,215,162,0.2);
+      border-color: rgba(76,215,162,0.6);
+    }
+
+    .toggle.on::after {
+      transform: translateX(19px);
+      background: var(--success);
     }
 
     .error {
@@ -266,6 +358,8 @@
       font-size: 0.88rem;
       color: var(--muted);
     }
+
+    .hidden { display: none !important; }
 
     @media (min-width: 640px) {
       body { padding: 24px 0; }
@@ -285,6 +379,19 @@
   <script>
     const app = document.getElementById('app');
 
+    const defaultCategories = [
+      { key: 'government', title: 'Government', icon: '🏛️', description: 'SASSA, Home Affairs, SARS, NSFAS and more.' },
+      { key: 'jobs', title: 'Jobs & CVs', icon: '💼', description: 'CVs, applications and interviews.' },
+      { key: 'education', title: 'Education', icon: '🎓', description: 'Admissions and student support services.' },
+      { key: 'applications', title: 'Applications', icon: '📄', description: 'Online forms and document help.' }
+    ];
+
+    const defaultNotifications = [
+      { id: 1, title: 'Request received', detail: 'Your Government request is now in review.', createdAt: new Date().toISOString() },
+      { id: 2, title: 'Profile update', detail: 'Your contact details were saved successfully.', createdAt: new Date(Date.now() - 3600000).toISOString() },
+      { id: 3, title: 'Service reminder', detail: 'Need support with a document? Submit a new request today.', createdAt: new Date(Date.now() - 86400000).toISOString() }
+    ];
+
     function getToken() {
       return localStorage.getItem('scentcafe_token');
     }
@@ -298,32 +405,49 @@
       localStorage.removeItem('scentcafe_session');
     }
 
-    async function apiFetch(path, options = {}) {
-      const token = getToken();
-      const headers = {
-        'Content-Type': 'application/json',
-        ...(options.headers || {})
+    function getAccount() {
+      const saved = JSON.parse(localStorage.getItem('scentcafeAccount') || 'null');
+      if (saved) return saved;
+
+      return {
+        name: 'Customer',
+        email: 'customer@scentcafe.com',
+        password: 'password123',
+        emailAlerts: true,
+        smsAlerts: true,
+        preferredCategories: ['government', 'jobs']
       };
+    }
 
-      if (token) {
-        headers.Authorization = `Bearer ${token}`;
-      }
+    function saveAccount(account) {
+      localStorage.setItem('scentcafeAccount', JSON.stringify(account));
+    }
 
-      const response = await fetch(path, {
-        ...options,
-        headers,
+    function getNotifications() {
+      const notifications = JSON.parse(localStorage.getItem('scentcafeNotifications') || 'null');
+      if (Array.isArray(notifications) && notifications.length) return notifications;
+      localStorage.setItem('scentcafeNotifications', JSON.stringify(defaultNotifications));
+      return defaultNotifications;
+    }
+
+    function addNotification(title, detail) {
+      const notifications = getNotifications();
+      notifications.unshift({
+        id: Date.now(),
+        title,
+        detail,
+        createdAt: new Date().toISOString()
       });
 
-      const contentType = response.headers.get('content-type') || '';
-      const data = contentType.includes('application/json')
-        ? await response.json()
-        : await response.text();
+      localStorage.setItem('scentcafeNotifications', JSON.stringify(notifications.slice(0, 8)));
+    }
 
-      if (!response.ok) {
-        throw new Error(data.message || 'Request failed');
-      }
+    function getTickets() {
+      return JSON.parse(localStorage.getItem('scentcafeRequests') || '[]');
+    }
 
-      return data;
+    function saveTickets(data) {
+      localStorage.setItem('scentcafeRequests', JSON.stringify(data));
     }
 
     function renderError(message) {
@@ -350,7 +474,6 @@
           <input id="password" type="password" placeholder="Enter your password" />
 
           <button class="primary" id="loginBtn">Sign In</button>
-
           <button class="secondary" id="signupBtn">Create account</button>
 
           <div class="demo-box">
@@ -361,27 +484,25 @@
         </div>
       `;
 
-      document.getElementById('loginBtn').addEventListener('click', async () => {
+      document.getElementById('loginBtn').addEventListener('click', () => {
         const email = document.getElementById('email').value.trim();
-        const password = document.getElementById('password').value.trim();
+        const password = document.getElementById('password').value;
 
-        try {
-          const result = await apiFetch('/api/login', {
-            method: 'POST',
-            body: JSON.stringify({ email, password })
-          });
+        const saved = JSON.parse(localStorage.getItem('scentcafeAccount') || 'null');
+        const demo = email === 'customer@scentcafe.com' && password === 'password123';
+        const savedLogin = saved && email === saved.email && password === saved.password;
 
-          saveToken(result.token);
-          localStorage.setItem('scentcafe_session', JSON.stringify(result.user));
-          renderHome();
-        } catch (error) {
-          renderError(error.message);
+        if (!demo && !savedLogin) {
+          renderError('Incorrect email or password.');
+          return;
         }
+
+        saveToken('demo-token');
+        localStorage.setItem('scentcafe_session', JSON.stringify({ name: saved ? saved.name : 'Customer', email }));
+        renderHome();
       });
 
-      document.getElementById('signupBtn').addEventListener('click', () => {
-        renderSignup();
-      });
+      document.getElementById('signupBtn').addEventListener('click', () => renderSignup());
     }
 
     function renderSignup() {
@@ -391,11 +512,8 @@
           <h1>Join ScentCafe</h1>
           <p class="subtitle">Register to access services and manage your requests.</p>
 
-          <label>First name</label>
-          <input id="firstName" placeholder="First name" />
-
-          <label>Last name</label>
-          <input id="lastName" placeholder="Last name" />
+          <label>Full name</label>
+          <input id="fullName" placeholder="Your full name" />
 
           <label>Email address</label>
           <input id="newEmail" type="email" placeholder="name@example.com" />
@@ -408,142 +526,90 @@
         </div>
       `;
 
-      document.getElementById('createBtn').addEventListener('click', async () => {
-        const firstName = document.getElementById('firstName').value.trim();
-        const lastName = document.getElementById('lastName').value.trim();
+      document.getElementById('createBtn').addEventListener('click', () => {
+        const name = document.getElementById('fullName').value.trim();
         const email = document.getElementById('newEmail').value.trim();
-        const password = document.getElementById('newPassword').value.trim();
+        const password = document.getElementById('newPassword').value;
 
-        try {
-          const result = await apiFetch('/api/signup', {
-            method: 'POST',
-            body: JSON.stringify({ firstName, lastName, email, password })
-          });
-
-          saveToken(result.token);
-          localStorage.setItem('scentcafe_session', JSON.stringify(result.user));
-          renderHome();
-        } catch (error) {
-          renderError(error.message);
+        if (!name || !email || !password) {
+          renderError('Please complete all fields.');
+          return;
         }
+
+        saveAccount({
+          name,
+          email,
+          password,
+          emailAlerts: true,
+          smsAlerts: true,
+          preferredCategories: ['government', 'jobs']
+        });
+
+        document.getElementById('email').value = email;
+        renderLogin();
+        alert('Account created successfully. You can now sign in.');
       });
 
       document.getElementById('backBtn').addEventListener('click', renderLogin);
     }
 
-    async function loadHomeData() {
-      try {
-        const session = await apiFetch('/api/session');
-        const requests = await apiFetch('/api/requests');
-        return { user: session.user, requests: requests.requests || [] };
-      } catch (error) {
-        clearSession();
-        renderLogin();
-        return null;
-      }
-    }
-
-    function createRequestMarkup(requests) {
-      if (!requests.length) {
-        return '<p class="small">No requests yet. Submit your first request below.</p>';
-      }
-
-      return requests.map((request) => `
-        <div class="request-item">
-          <strong>${request.service}</strong>
-          <div class="small">${request.number} • ${new Date(request.date).toLocaleString()}</div>
-          <div class="small" style="margin-top:8px;">${request.request}</div>
-          <span class="status">${request.status}</span>
+    function serviceCategoryMarkup() {
+      return defaultCategories.map((category) => `
+        <div class="category-card" data-category="${category.key}" tabindex="0">
+          <div>
+            <div class="category-icon">${category.icon}</div>
+            <h4>${category.title}</h4>
+          </div>
+          <p>${category.description}</p>
         </div>
       `).join('');
     }
 
-    function renderRequestForm(user) {
-      app.innerHTML = `
-        <div class="card">
-          <div class="badge">Create request</div>
-          <h1>New Request</h1>
-
-          <label>Name</label>
-          <input id="requestName" value="${user.name || ''}" />
-
-          <label>Phone</label>
-          <input id="requestPhone" placeholder="Enter your phone number" />
-
-          <label>Service</label>
-          <select id="requestService">
-            <option value="ScentCafe Service">ScentCafe Service</option>
-            <option value="Government Services">Government Services</option>
-            <option value="Jobs & CVs">Jobs & CVs</option>
-            <option value="Education">Education</option>
-            <option value="Applications">Applications</option>
-          </select>
-
-          <label>What do you need help with?</label>
-          <textarea id="requestDetails" placeholder="Describe what you need help with..."></textarea>
-
-          <button class="primary" id="submitRequestBtn">Submit request</button>
-          <button class="secondary" id="cancelRequestBtn">Back to home</button>
-        </div>
-      `;
-
-      document.getElementById('cancelRequestBtn').addEventListener('click', renderHome);
-
-      document.getElementById('submitRequestBtn').addEventListener('click', async () => {
-        const name = document.getElementById('requestName').value.trim();
-        const phone = document.getElementById('requestPhone').value.trim();
-        const service = document.getElementById('requestService').value;
-        const request = document.getElementById('requestDetails').value.trim();
-
-        if (!name || !phone || !request) {
-          renderError('Please complete all fields.');
-          return;
-        }
-
-        try {
-          const result = await apiFetch('/api/requests', {
-            method: 'POST',
-            body: JSON.stringify({ name, phone, request, service })
-          });
-
-          renderHome();
-          alert(`Request submitted successfully!\n\nYour ticket number is: ${result.ticket.number}`);
-        } catch (error) {
-          renderError(error.message);
-        }
-      });
-    }
-
-    async function renderHome() {
-      const sessionData = await loadHomeData();
-      if (!sessionData) return;
-
-      const { user, requests } = sessionData;
+    function renderHome() {
+      const user = JSON.parse(localStorage.getItem('scentcafe_session') || '{"name":"Customer","email":"customer@scentcafe.com"}');
+      const notifications = getNotifications().slice(0, 3);
 
       app.innerHTML = `
         <div>
           <div class="card" style="margin-bottom:18px;">
-            <h2 style="margin-bottom:8px; color: var(--gold);">Welcome to ScentCafe</h2>
+            <div class="summary-row">
+              <h2 style="margin:0; color: var(--gold);">Welcome to ScentCafe</h2>
+              <span class="pill">${notifications.length}</span>
+            </div>
             <p class="subtitle">Hello ${user.name || 'there'}! Your digital service centre.</p>
             <button class="primary" id="requestBtn">Make a request</button>
           </div>
-
-          <div class="cta">Install and create shortcut</div>
 
           <div class="install-box">
             <div class="row">
               <div class="install-icon">G</div>
               <div>
-                <div class="install-label">Install</div>
-                <div class="install-note">This app can be installed from Chrome.</div>
+                <div class="install-label">Fast access</div>
+                <div class="install-note">ScentCafe works as a quick-access service dashboard for assistance requests.</div>
               </div>
             </div>
           </div>
 
+          <div class="notification-box">
+            <div class="summary-row">
+              <h3 style="margin:0; color: var(--gold);">Notifications</h3>
+              <button class="secondary" id="notificationLink" style="margin:0; width:auto; padding:8px 12px; font-size:0.85rem;">View all</button>
+            </div>
+            <div class="notification-list">
+              ${notifications.map((note) => `
+                <div class="notification-item">
+                  <strong>${note.title}</strong>
+                  <div class="small" style="margin-top:6px;">${note.detail}</div>
+                  <div class="small" style="margin-top:6px;">${new Date(note.createdAt).toLocaleDateString()}</div>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+
           <div class="request-box">
-            <h3 style="color: var(--gold); margin-bottom:10px;">Your requests</h3>
-            <div class="request-list">
-              ${createRequestMarkup(requests)}
+            <h3 style="color: var(--gold); margin-bottom:10px;">Popular service categories</h3>
+            <div class="category-grid">
+              ${serviceCategoryMarkup()}
             </div>
           </div>
 
@@ -551,7 +617,148 @@
         </div>
       `;
 
-      document.getElementById('requestBtn').addEventListener('click', () => renderRequestForm(user));
+      document.querySelectorAll('.category-card').forEach((card) => {
+        card.addEventListener('click', () => openRequest(card.dataset.category));
+      });
+
+      document.getElementById('requestBtn').addEventListener('click', () => openRequest('General Assistance'));
+      document.getElementById('notificationLink').addEventListener('click', () => renderNotifications());
+      document.getElementById('logoutBtn').addEventListener('click', () => {
+        clearSession();
+        renderLogin();
+      });
+    }
+
+    function renderNotifications() {
+      const list = getNotifications();
+      app.innerHTML = `
+        <div class="card">
+          <div class="summary-row">
+            <h2 style="margin:0; color: var(--gold);">Notifications</h2>
+            <button class="secondary" id="backHome" style="margin:0; width:auto; padding:8px 12px; font-size:0.85rem;">Back</button>
+          </div>
+          <div class="notification-list">
+            ${list.map((note) => `
+              <div class="notification-item">
+                <strong>${note.title}</strong>
+                <div class="small" style="margin-top:6px;">${note.detail}</div>
+                <div class="small" style="margin-top:6px;">${new Date(note.createdAt).toLocaleString()}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+
+      document.getElementById('backHome').addEventListener('click', renderHome);
+    }
+
+    function renderServices() {
+      app.innerHTML = `
+        <div class="card">
+          <div class="summary-row">
+            <h2 style="margin:0; color: var(--gold);">Our Services</h2>
+            <button class="secondary" id="backHome" style="margin:0; width:auto; padding:8px 12px; font-size:0.85rem;">Back</button>
+          </div>
+          <div class="category-grid">
+            ${serviceCategoryMarkup()}
+          </div>
+        </div>
+      `;
+
+      document.querySelectorAll('.category-card').forEach((card) => {
+        card.addEventListener('click', () => openRequest(card.dataset.category));
+      });
+
+      document.getElementById('backHome').addEventListener('click', renderHome);
+    }
+
+    function renderRequests() {
+      const list = getTickets();
+      const items = list.length ? list.slice().reverse().map((t) => `
+        <div class="request-item">
+          <strong>${t.service}</strong>
+          <div class="small">${t.number} • ${new Date(t.date).toLocaleString()}</div>
+          <div class="small" style="margin-top:8px;">${t.message}</div>
+          <span class="status">${t.status}</span>
+        </div>
+      `).join('') : '<p class="small">No requests yet. Submit your first request below.</p>';
+
+      app.innerHTML = `
+        <div class="card">
+          <div class="summary-row">
+            <h2 style="margin:0; color: var(--gold);">My Requests</h2>
+            <button class="secondary" id="newRequestBtn" style="margin:0; width:auto; padding:8px 12px; font-size:0.85rem;">New</button>
+          </div>
+          <div class="request-list">
+            ${items}
+          </div>
+          <button class="primary" id="requestBtn">Make a request</button>
+        </div>
+      `;
+
+      document.getElementById('newRequestBtn').addEventListener('click', () => openRequest('General Assistance'));
+      document.getElementById('requestBtn').addEventListener('click', () => openRequest('General Assistance'));
+    }
+
+    function renderAccount() {
+      const account = getAccount();
+      const profile = JSON.parse(localStorage.getItem('scentcafe_session') || '{"name":"Customer","email":"customer@scentcafe.com"}');
+
+      app.innerHTML = `
+        <div class="card">
+          <div class="summary-row">
+            <h2 style="margin:0; color: var(--gold);">My Account</h2>
+            <button class="secondary" id="homeBtn" style="margin:0; width:auto; padding:8px 12px; font-size:0.85rem;">Home</button>
+          </div>
+
+          <div class="profile-box">
+            <h3 style="color: var(--gold); margin-bottom:10px;">Profile</h3>
+            <label>Name</label>
+            <input id="profileName" value="${profile.name || account.name || 'Customer'}" />
+
+            <label>Email</label>
+            <input id="profileEmail" type="email" value="${profile.email || account.email || ''}" />
+
+            <div class="toggle-row">
+              <span>Email alerts</span>
+              <button class="toggle ${account.emailAlerts ? 'on' : ''}" data-key="emailAlerts" type="button"></button>
+            </div>
+
+            <div class="toggle-row">
+              <span>SMS alerts</span>
+              <button class="toggle ${account.smsAlerts ? 'on' : ''}" data-key="smsAlerts" type="button"></button>
+            </div>
+          </div>
+
+          <button class="primary" id="saveProfileBtn">Save profile</button>
+          <button class="secondary" id="logoutBtn">Sign out</button>
+        </div>
+      `;
+
+      document.getElementById('homeBtn').addEventListener('click', renderHome);
+
+      document.querySelectorAll('.toggle').forEach((toggle) => {
+        toggle.addEventListener('click', () => {
+          toggle.classList.toggle('on');
+        });
+      });
+
+      document.getElementById('saveProfileBtn').addEventListener('click', () => {
+        const next = getAccount();
+        next.name = document.getElementById('profileName').value.trim() || next.name;
+        next.email = document.getElementById('profileEmail').value.trim() || next.email;
+        next.emailAlerts = document.querySelector('[data-key="emailAlerts"]').classList.contains('on');
+        next.smsAlerts = document.querySelector('[data-key="smsAlerts"]').classList.contains('on');
+        saveAccount(next);
+
+        localStorage.setItem('scentcafe_session', JSON.stringify({
+          name: next.name,
+          email: next.email
+        }));
+
+        addNotification('Profile saved', 'Your account preferences were updated successfully.');
+        renderAccount();
+      });
 
       document.getElementById('logoutBtn').addEventListener('click', () => {
         clearSession();
@@ -559,7 +766,75 @@
       });
     }
 
-    async function initApp() {
+    function getCategoryLabel(key) {
+      const found = defaultCategories.find((category) => category.key === key);
+      return found ? found.title : 'General Assistance';
+    }
+
+    function openRequest(serviceName) {
+      const normalized = typeof serviceName === 'string' ? serviceName : 'General Assistance';
+      const categoryName = getCategoryLabel(normalized.toLowerCase().replace(/\s+/g, ''));
+      const mappedService = defaultCategories.some((category) => category.key === normalized)
+        ? getCategoryLabel(normalized)
+        : categoryName || normalized;
+
+      app.innerHTML = `
+        <div class="card">
+          <div class="summary-row">
+            <h2 style="margin:0; color: var(--gold);">New Request</h2>
+            <button class="secondary" id="backBtn" style="margin:0; width:auto; padding:8px 12px; font-size:0.85rem;">Back</button>
+          </div>
+
+          <label>Name</label>
+          <input id="requestName" value="${(JSON.parse(localStorage.getItem('scentcafe_session') || '{"name":"Customer"}')).name || getAccount().name}" />
+
+          <label>Phone Number</label>
+          <input id="requestPhone" placeholder="Your phone number" />
+
+          <label>Service</label>
+          <input id="requestService" value="${mappedService}" />
+
+          <label>What do you need help with?</label>
+          <textarea id="requestMessage" placeholder="Tell us what you need help with"></textarea>
+
+          <button class="primary" id="submitRequestBtn">Submit Request</button>
+        </div>
+      `;
+
+      document.getElementById('backBtn').addEventListener('click', renderHome);
+
+      document.getElementById('submitRequestBtn').addEventListener('click', () => {
+        const name = document.getElementById('requestName').value.trim();
+        const phone = document.getElementById('requestPhone').value.trim();
+        const service = document.getElementById('requestService').value.trim() || 'General Assistance';
+        const message = document.getElementById('requestMessage').value.trim();
+
+        if (!name || !phone || !message) {
+          renderError('Please complete all fields.');
+          return;
+        }
+
+        const list = getTickets();
+        const number = 'SC-' + new Date().getFullYear() + '-' + String(list.length + 1).padStart(4, '0');
+
+        list.push({
+          number,
+          name,
+          phone,
+          service,
+          message,
+          status: 'Received',
+          date: new Date().toISOString()
+        });
+
+        saveTickets(list);
+        addNotification('Request submitted', `Ticket ${number} was created for ${service}.`);
+        renderRequests();
+        alert('Request submitted successfully!\n\nTicket number: ' + number);
+      });
+    }
+
+    function initApp() {
       const token = getToken();
 
       if (!token) {
@@ -567,19 +842,7 @@
         return;
       }
 
-      try {
-        await apiFetch('/api/session');
-        renderHome();
-      } catch (error) {
-        clearSession();
-        renderLogin();
-      }
-    }
-
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js', { scope: './' })
-        .then(() => console.log('Service worker registered'))
-        .catch((error) => console.log('Service worker registration failed:', error));
+      renderHome();
     }
 
     initApp();
