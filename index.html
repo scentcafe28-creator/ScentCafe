@@ -22,6 +22,7 @@
       --text: #f3f4f6;
       --muted: #b7c1cf;
       --accent: #c9844b;
+      --danger: #ff6b6b;
     }
 
     * { box-sizing: border-box; }
@@ -112,7 +113,7 @@
       font-size: 0.95rem;
     }
 
-    input {
+    input, textarea, select {
       width: 100%;
       background: var(--panel-2);
       color: var(--text);
@@ -121,9 +122,10 @@
       padding: 14px 12px;
       font-size: 1rem;
       outline: none;
+      resize: vertical;
     }
 
-    input:focus {
+    input:focus, textarea:focus, select:focus {
       border-color: var(--gold);
       box-shadow: 0 0 0 2px rgba(212,175,55,0.15);
     }
@@ -154,15 +156,11 @@
       margin-top: 12px;
     }
 
-    .link {
-      display: inline-block;
-      margin-top: 14px;
-      background: none;
-      border: none;
-      color: var(--gold);
-      font-weight: 700;
-      width: auto;
-      padding: 0;
+    .danger {
+      background: rgba(255,107,107,0.12);
+      border: 1px solid rgba(255,107,107,0.4);
+      color: #ffd1d1;
+      margin-top: 12px;
     }
 
     .demo-box {
@@ -221,6 +219,54 @@
       font-size: 0.92rem;
     }
 
+    .request-box {
+      margin-top: 18px;
+      background: rgba(13, 27, 45, 0.9);
+      border: 1px solid rgba(212,175,55,0.45);
+      border-radius: 16px;
+      padding: 18px;
+    }
+
+    .request-list {
+      margin-top: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .request-item {
+      background: rgba(9, 22, 38, 0.8);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px 14px;
+    }
+
+    .status {
+      display: inline-block;
+      margin-top: 8px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: rgba(212,175,55,0.12);
+      color: var(--gold);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .error {
+      color: #ffd1d1;
+      background: rgba(255,107,107,0.08);
+      border: 1px solid rgba(255,107,107,0.3);
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-top: 12px;
+      font-size: 0.95rem;
+    }
+
+    .small {
+      font-size: 0.88rem;
+      color: var(--muted);
+    }
+
     @media (min-width: 640px) {
       body { padding: 24px 0; }
     }
@@ -238,16 +284,56 @@
 
   <script>
     const app = document.getElementById('app');
-    const demoUser = {
-      name: 'ScentCafe Customer',
-      email: 'customer@scentcafe.com',
-      password: 'password123'
-    };
 
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('./sw.js', { scope: './' })
-        .then(() => console.log('Service worker registered'))
-        .catch((error) => console.log('Service worker registration failed:', error));
+    function getToken() {
+      return localStorage.getItem('scentcafe_token');
+    }
+
+    function saveToken(token) {
+      localStorage.setItem('scentcafe_token', token);
+    }
+
+    function clearSession() {
+      localStorage.removeItem('scentcafe_token');
+      localStorage.removeItem('scentcafe_session');
+    }
+
+    async function apiFetch(path, options = {}) {
+      const token = getToken();
+      const headers = {
+        'Content-Type': 'application/json',
+        ...(options.headers || {})
+      };
+
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
+      }
+
+      const response = await fetch(path, {
+        ...options,
+        headers,
+      });
+
+      const contentType = response.headers.get('content-type') || '';
+      const data = contentType.includes('application/json')
+        ? await response.json()
+        : await response.text();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Request failed');
+      }
+
+      return data;
+    }
+
+    function renderError(message) {
+      const existing = document.querySelector('.error');
+      if (existing) existing.remove();
+
+      const errorBox = document.createElement('div');
+      errorBox.className = 'error';
+      errorBox.textContent = message;
+      app.prepend(errorBox);
     }
 
     function renderLogin() {
@@ -275,15 +361,21 @@
         </div>
       `;
 
-      document.getElementById('loginBtn').addEventListener('click', () => {
+      document.getElementById('loginBtn').addEventListener('click', async () => {
         const email = document.getElementById('email').value.trim();
         const password = document.getElementById('password').value.trim();
 
-        if (email === demoUser.email && password === demoUser.password) {
-          localStorage.setItem('scentcafe_session', JSON.stringify(demoUser));
+        try {
+          const result = await apiFetch('/api/login', {
+            method: 'POST',
+            body: JSON.stringify({ email, password })
+          });
+
+          saveToken(result.token);
+          localStorage.setItem('scentcafe_session', JSON.stringify(result.user));
           renderHome();
-        } else {
-          alert('Invalid email or password. Use the demo credentials shown above.');
+        } catch (error) {
+          renderError(error.message);
         }
       });
 
@@ -316,27 +408,118 @@
         </div>
       `;
 
-      document.getElementById('createBtn').addEventListener('click', () => {
+      document.getElementById('createBtn').addEventListener('click', async () => {
         const firstName = document.getElementById('firstName').value.trim();
         const lastName = document.getElementById('lastName').value.trim();
         const email = document.getElementById('newEmail').value.trim();
         const password = document.getElementById('newPassword').value.trim();
 
-        if (!firstName || !lastName || !email || !password) {
-          alert('Please fill in all fields.');
-          return;
-        }
+        try {
+          const result = await apiFetch('/api/signup', {
+            method: 'POST',
+            body: JSON.stringify({ firstName, lastName, email, password })
+          });
 
-        const user = { name: `${firstName} ${lastName}`, email, password };
-        localStorage.setItem('scentcafe_session', JSON.stringify(user));
-        renderHome();
+          saveToken(result.token);
+          localStorage.setItem('scentcafe_session', JSON.stringify(result.user));
+          renderHome();
+        } catch (error) {
+          renderError(error.message);
+        }
       });
 
       document.getElementById('backBtn').addEventListener('click', renderLogin);
     }
 
-    function renderHome() {
-      const user = JSON.parse(localStorage.getItem('scentcafe_session') || '{}');
+    async function loadHomeData() {
+      try {
+        const session = await apiFetch('/api/session');
+        const requests = await apiFetch('/api/requests');
+        return { user: session.user, requests: requests.requests || [] };
+      } catch (error) {
+        clearSession();
+        renderLogin();
+        return null;
+      }
+    }
+
+    function createRequestMarkup(requests) {
+      if (!requests.length) {
+        return '<p class="small">No requests yet. Submit your first request below.</p>';
+      }
+
+      return requests.map((request) => `
+        <div class="request-item">
+          <strong>${request.service}</strong>
+          <div class="small">${request.number} • ${new Date(request.date).toLocaleString()}</div>
+          <div class="small" style="margin-top:8px;">${request.request}</div>
+          <span class="status">${request.status}</span>
+        </div>
+      `).join('');
+    }
+
+    function renderRequestForm(user) {
+      app.innerHTML = `
+        <div class="card">
+          <div class="badge">Create request</div>
+          <h1>New Request</h1>
+
+          <label>Name</label>
+          <input id="requestName" value="${user.name || ''}" />
+
+          <label>Phone</label>
+          <input id="requestPhone" placeholder="Enter your phone number" />
+
+          <label>Service</label>
+          <select id="requestService">
+            <option value="ScentCafe Service">ScentCafe Service</option>
+            <option value="Government Services">Government Services</option>
+            <option value="Jobs & CVs">Jobs & CVs</option>
+            <option value="Education">Education</option>
+            <option value="Applications">Applications</option>
+          </select>
+
+          <label>What do you need help with?</label>
+          <textarea id="requestDetails" placeholder="Describe what you need help with..."></textarea>
+
+          <button class="primary" id="submitRequestBtn">Submit request</button>
+          <button class="secondary" id="cancelRequestBtn">Back to home</button>
+        </div>
+      `;
+
+      document.getElementById('cancelRequestBtn').addEventListener('click', renderHome);
+
+      document.getElementById('submitRequestBtn').addEventListener('click', async () => {
+        const name = document.getElementById('requestName').value.trim();
+        const phone = document.getElementById('requestPhone').value.trim();
+        const service = document.getElementById('requestService').value;
+        const request = document.getElementById('requestDetails').value.trim();
+
+        if (!name || !phone || !request) {
+          renderError('Please complete all fields.');
+          return;
+        }
+
+        try {
+          const result = await apiFetch('/api/requests', {
+            method: 'POST',
+            body: JSON.stringify({ name, phone, request, service })
+          });
+
+          renderHome();
+          alert(`Request submitted successfully!\n\nYour ticket number is: ${result.ticket.number}`);
+        } catch (error) {
+          renderError(error.message);
+        }
+      });
+    }
+
+    async function renderHome() {
+      const sessionData = await loadHomeData();
+      if (!sessionData) return;
+
+      const { user, requests } = sessionData;
+
       app.innerHTML = `
         <div>
           <div class="card" style="margin-bottom:18px;">
@@ -357,26 +540,49 @@
             </div>
           </div>
 
+          <div class="request-box">
+            <h3 style="color: var(--gold); margin-bottom:10px;">Your requests</h3>
+            <div class="request-list">
+              ${createRequestMarkup(requests)}
+            </div>
+          </div>
+
           <button class="secondary" id="logoutBtn">Sign out</button>
         </div>
       `;
 
-      document.getElementById('requestBtn').addEventListener('click', () => {
-        alert('Request flow is ready to connect to your backend or service API.');
-      });
+      document.getElementById('requestBtn').addEventListener('click', () => renderRequestForm(user));
 
       document.getElementById('logoutBtn').addEventListener('click', () => {
-        localStorage.removeItem('scentcafe_session');
+        clearSession();
         renderLogin();
       });
     }
 
-    const session = localStorage.getItem('scentcafe_session');
-    if (session) {
-      renderHome();
-    } else {
-      renderLogin();
+    async function initApp() {
+      const token = getToken();
+
+      if (!token) {
+        renderLogin();
+        return;
+      }
+
+      try {
+        await apiFetch('/api/session');
+        renderHome();
+      } catch (error) {
+        clearSession();
+        renderLogin();
+      }
     }
+
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js', { scope: './' })
+        .then(() => console.log('Service worker registered'))
+        .catch((error) => console.log('Service worker registration failed:', error));
+    }
+
+    initApp();
   </script>
 </body>
 </html>
