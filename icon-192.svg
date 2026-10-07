@@ -1,23 +1,35 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="192" height="192" viewBox="0 0 192 192" role="img" aria-label="ScentCafe logo">
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ScentCafe app icon">
   <defs>
-    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
-      <stop offset="0%" stop-color="#201711"/>
-      <stop offset="100%" stop-color="#3b2617"/>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#F7EEE6"/>
+      <stop offset="100%" stop-color="#C9844B"/>
     </linearGradient>
-    <linearGradient id="gold" x1="0" x2="1" y1="0" y2="1">
-      <stop offset="0%" stop-color="#f2d39d"/>
-      <stop offset="100%" stop-color="#c98d3f"/>
+    <linearGradient id="bottleBody" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#4A312D"/>
+      <stop offset="100%" stop-color="#2A1C1A"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#E5AE71"/>
+      <stop offset="100%" stop-color="#D17A48"/>
     </linearGradient>
   </defs>
-  <rect width="192" height="192" rx="42" fill="url(#bg)"/>
-  <g transform="translate(0 8)">
-    <path d="M62 66h68c12 0 22 10 22 22v18c0 34-26 57-56 57S46 140 46 106V88c0-12 10-22 22-22h-6z" fill="none" stroke="url(#gold)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="M60 68h72c7 0 12 5 12 12v10H48V80c0-7 5-12 12-12z" fill="url(#gold)" opacity="0.9"/>
-    <path d="M66 52c0-17 14-30 31-30s31 13 31 30" fill="none" stroke="#f2d39d" stroke-width="8" stroke-linecap="round"/>
-    <path d="M80 82c3 8 10 14 18 14s15-6 18-14" fill="none" stroke="#201711" stroke-width="5" stroke-linecap="round"/>
-    <path d="M52 101c10 6 22 9 34 9 14 0 28-4 38-11" fill="none" stroke="#201711" stroke-width="5" stroke-linecap="round" opacity="0.7"/>
-    <circle cx="48" cy="44" r="5" fill="#f7d48d"/>
-    <circle cx="144" cy="44" r="5" fill="#f7d48d"/>
-    <circle cx="120" cy="30" r="4" fill="#f7d48d"/>
-  </g>
+
+  <rect x="28" y="28" width="456" height="456" rx="110" fill="url(#bg)"/>
+  <circle cx="256" cy="262" r="160" fill="#F5E8DC" opacity="0.38"/>
+
+  <rect x="162" y="96" width="188" height="282" rx="50" fill="url(#bottleBody)"/>
+  <rect x="196" y="58" width="120" height="70" rx="20" fill="#5A4038"/>
+
+  <path d="M194 182 C175 200, 166 223, 166 255 C166 318, 198 371, 256 413 C314 371, 346 318, 346 255 C346 223, 337 200, 318 182 L194 182 Z" fill="#F7F1E8"/>
+
+  <path d="M208 214 C233 189, 281 182, 317 202 C286 236, 274 272, 274 327 C274 360, 297 391, 325 408 C289 438, 245 438, 208 408 C172 375, 160 323, 208 214 Z" fill="url(#accent)"/>
+
+  <path d="M314 314 C364 295, 407 259, 431 214 C390 198, 344 200, 301 217 C288 255, 293 291, 314 314 Z" fill="#8AA88A"/>
+  <path d="M322 254 C357 240, 388 220, 415 200" stroke="#ECF5EC" stroke-width="10" stroke-linecap="round" fill="none"/>
+
+  <circle cx="386" cy="150" r="12" fill="#FFF7F2" opacity="0.95"/>
+  <circle cx="419" cy="124" r="7" fill="#FFF7F2" opacity="0.8"/>
+  <circle cx="444" cy="158" r="9" fill="#FFF7F2" opacity="0.8"/>
+
+  <path d="M208 392 C234 405, 248 412, 273 412 C298 412, 320 405, 347 392" stroke="#D9B391" stroke-width="12" stroke-linecap="round" fill="none"/>
 </svg>
