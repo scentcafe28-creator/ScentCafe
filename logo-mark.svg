@@ -1,4 +1,4 @@
-<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ScentCafe logo">
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="ScentCafe brand mark">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#F9F1E9"/>
@@ -29,6 +29,4 @@
   <circle cx="392" cy="146" r="12" fill="#FFF9F3" opacity="0.95"/>
   <circle cx="421" cy="120" r="7" fill="#FFF9F3" opacity="0.8"/>
   <circle cx="446" cy="152" r="9" fill="#FFF9F3" opacity="0.8"/>
-
-  <path d="M205 387 C231 402, 247 410, 271 410 C296 410, 319 402, 345 387" stroke="#DAB38A" stroke-width="11" stroke-linecap="round" fill="none"/>
 </svg>
