@@ -1,383 +1,8 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="ScentCafe digital services and customer app" />
-  <meta name="theme-color" content="#C9844B" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="ScentCafe" />
-  <link rel="manifest" href="./manifest.json" />
-  <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
-  <link rel="apple-touch-icon" href="./icon-192.svg" />
-  <title>ScentCafe</title>
-  <style>
-    :root {
-      --bg: #07111f;
-      --panel: #0d1b2d;
-      --panel-2: #091626;
-      --line: #30455f;
-      --gold: #d4af37;
-      --text: #f3f4f6;
-      --muted: #b7c1cf;
-      --accent: #c9844b;
-      --danger: #ff6b6b;
-      --success: #4cd7a2;
-      --shadow: rgba(0,0,0,0.18);
-    }
-
-    * { box-sizing: border-box; }
-    html, body {
-      margin: 0;
-      min-height: 100%;
-      background: var(--bg);
-      color: var(--text);
-      font-family: Arial, Helvetica, sans-serif;
-    }
-
-    body {
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: flex-start;
-    }
-
-    .app {
-      width: 100%;
-      max-width: 480px;
-      min-height: 100vh;
-      background: var(--bg);
-      padding: 18px 18px 90px;
-    }
-
-    .topbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 8px 0 16px;
-      border-bottom: 1px solid rgba(212, 175, 55, 0.5);
-      margin-bottom: 18px;
-    }
-
-    .brand {
-      font-size: 2.1rem;
-      font-weight: 800;
-      color: var(--gold);
-      letter-spacing: -0.04em;
-    }
-
-    .spark {
-      font-size: 1.7rem;
-      color: var(--gold);
-    }
-
-    .card {
-      background: rgba(13, 27, 45, 0.9);
-      border: 1px solid rgba(212, 175, 55, 0.5);
-      border-radius: 18px;
-      padding: 22px 18px;
-      box-shadow: 0 8px 18px var(--shadow);
-    }
-
-    .badge {
-      display: inline-block;
-      padding: 7px 12px;
-      border-radius: 999px;
-      background: rgba(212, 175, 55, 0.12);
-      border: 1px solid rgba(212, 175, 55, 0.35);
-      color: var(--gold);
-      font-size: 12px;
-      margin-bottom: 12px;
-    }
-
-    h1, h2, h3, p { margin-top: 0; }
-
-    h1 {
-      font-size: clamp(2.2rem, 6vw, 4rem);
-      line-height: 0.95;
-      color: var(--gold);
-      margin-bottom: 18px;
-    }
-
-    .subtitle {
-      color: var(--muted);
-      font-size: 1.05rem;
-      line-height: 1.45;
-      margin-bottom: 18px;
-    }
-
-    label {
-      display: block;
-      margin-top: 18px;
-      margin-bottom: 8px;
-      color: var(--muted);
-      font-size: 0.95rem;
-    }
-
-    input, textarea, select {
-      width: 100%;
-      background: var(--panel-2);
-      color: var(--text);
-      border: 1px solid var(--line);
-      border-radius: 10px;
-      padding: 14px 12px;
-      font-size: 1rem;
-      outline: none;
-      resize: vertical;
-    }
-
-    input:focus, textarea:focus, select:focus {
-      border-color: var(--gold);
-      box-shadow: 0 0 0 2px rgba(212,175,55,0.15);
-    }
-
-    button {
-      width: 100%;
-      border: none;
-      border-radius: 12px;
-      padding: 15px 18px;
-      font-size: 1.1rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: transform 0.15s ease;
-    }
-
-    button:active { transform: scale(0.99); }
-
-    .primary {
-      background: var(--gold);
-      color: #0b1728;
-      margin-top: 18px;
-    }
-
-    .secondary {
-      background: transparent;
-      border: 1px solid var(--line);
-      color: var(--text);
-      margin-top: 12px;
-    }
-
-    .danger {
-      background: rgba(255,107,107,0.12);
-      border: 1px solid rgba(255,107,107,0.4);
-      color: #ffd1d1;
-      margin-top: 12px;
-    }
-
-    .demo-box {
-      margin-top: 18px;
-      background: rgba(9, 22, 38, 0.8);
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 12px 14px;
-      color: var(--muted);
-      line-height: 1.6;
-      font-size: 0.9rem;
-    }
-
-    .cta {
-      margin-top: 28px;
-      font-size: 2.3rem;
-      font-weight: 800;
-      color: var(--gold);
-      line-height: 1.1;
-    }
-
-    .install-box, .request-box, .profile-box, .notification-box {
-      margin-top: 18px;
-      background: rgba(13, 27, 45, 0.9);
-      border: 1px solid rgba(212,175,55,0.45);
-      border-radius: 16px;
-      padding: 18px;
-    }
-
-    .install-box .row {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
-
-    .install-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 12px;
-      display: grid;
-      place-items: center;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid var(--line);
-      font-size: 1.4rem;
-    }
-
-    .install-label {
-      font-size: 1rem;
-      font-weight: 700;
-      color: var(--text);
-    }
-
-    .install-note {
-      color: var(--muted);
-      margin-top: 8px;
-      font-size: 0.92rem;
-    }
-
-    .request-list, .notification-list, .category-grid {
-      margin-top: 18px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .category-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 12px;
-    }
-
-    .request-item, .notification-item, .category-card {
-      background: rgba(9, 22, 38, 0.8);
-      border: 1px solid var(--line);
-      border-radius: 12px;
-      padding: 12px 14px;
-    }
-
-    .category-card {
-      cursor: pointer;
-      min-height: 120px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-
-    .category-icon {
-      font-size: 1.7rem;
-      margin-bottom: 8px;
-    }
-
-    .category-card h4 {
-      margin: 0 0 5px;
-      color: var(--gold);
-    }
-
-    .category-card p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 0.85rem;
-      line-height: 1.5;
-    }
-
-    .status {
-      display: inline-block;
-      margin-top: 8px;
-      padding: 6px 10px;
-      border-radius: 999px;
-      background: rgba(212,175,55,0.12);
-      color: var(--gold);
-      font-size: 12px;
-      font-weight: 700;
-    }
-
-    .pill {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      min-width: 26px;
-      min-height: 26px;
-      border-radius: 999px;
-      padding: 4px 8px;
-      background: rgba(212,175,55,0.14);
-      color: var(--gold);
-      font-weight: 800;
-      margin-left: 8px;
-    }
-
-    .summary-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-
-    .toggle-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 10px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-      color: var(--muted);
-    }
-
-    .toggle {
-      width: 44px;
-      min-width: 44px;
-      height: 24px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.08);
-      border: 1px solid var(--line);
-      position: relative;
-      cursor: pointer;
-      padding: 0;
-      margin: 0;
-    }
-
-    .toggle::after {
-      content: "";
-      position: absolute;
-      top: 2px;
-      left: 3px;
-      width: 16px;
-      height: 16px;
-      border-radius: 50%;
-      background: #fff;
-      transition: transform 0.2s ease;
-    }
-
-    .toggle.on {
-      background: rgba(76,215,162,0.2);
-      border-color: rgba(76,215,162,0.6);
-    }
-
-    .toggle.on::after {
-      transform: translateX(19px);
-      background: var(--success);
-    }
-
-    .error {
-      color: #ffd1d1;
-      background: rgba(255,107,107,0.08);
-      border: 1px solid rgba(255,107,107,0.3);
-      border-radius: 10px;
-      padding: 10px 12px;
-      margin-top: 12px;
-      font-size: 0.95rem;
-    }
-
-    .small {
-      font-size: 0.88rem;
-      color: var(--muted);
-    }
-
-    .hidden { display: none !important; }
-
-    @media (min-width: 640px) {
-      body { padding: 24px 0; }
-    }
-  </style>
-</head>
-<body>
-  <div class="app">
-    <div class="topbar">
-      <div class="brand">ScentCafe</div>
-      <div class="spark">✦</div>
-    </div>
-
-    <div id="app"></div>
-  </div>
-
   <script>
     const app = document.getElementById('app');
+    const API_BASE_URL = (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')
+      ? 'http://localhost:3000'
+      : window.location.origin;
 
     const defaultCategories = [
       { key: 'government', title: 'Government', icon: '🏛️', description: 'SASSA, Home Affairs, SARS, NSFAS and more.' },
@@ -450,6 +75,43 @@
       localStorage.setItem('scentcafeRequests', JSON.stringify(data));
     }
 
+    function apiRequest(path, options = {}) {
+      const token = getToken();
+      const headers = { ...(options.headers || {}) };
+
+      if (!(options.body instanceof FormData)) {
+        headers['Content-Type'] = headers['Content-Type'] || 'application/json';
+      }
+
+      if (token) {
+        headers.Authorization = `Bearer ${token}`;
+      }
+
+      return fetch(`${API_BASE_URL}${path}`, {
+        ...options,
+        headers
+      }).then(async (response) => {
+        const contentType = response.headers.get('content-type') || '';
+        const data = contentType.includes('application/json')
+          ? await response.json().catch(() => ({}))
+          : await response.text().catch(() => '');
+
+        if (!response.ok) {
+          throw new Error((data && data.message) || 'Request failed');
+        }
+
+        return data;
+      });
+    }
+
+    function persistSession(user, token) {
+      saveToken(token);
+      localStorage.setItem('scentcafe_session', JSON.stringify({
+        name: user.name || user.firstName || 'Customer',
+        email: user.email || getAccount().email
+      }));
+    }
+
     function renderError(message) {
       const existing = document.querySelector('.error');
       if (existing) existing.remove();
@@ -479,27 +141,34 @@
           <div class="demo-box">
             Demo login:<br>
             Email: customer@scentcafe.com<br>
-            Password: password123
+            Password: password123<br>
+            Admin login:<br>
+            Email: admin@scentcafe.com<br>
+            Password: admin123
           </div>
         </div>
       `;
 
-      document.getElementById('loginBtn').addEventListener('click', () => {
+      document.getElementById('loginBtn').addEventListener('click', async () => {
         const email = document.getElementById('email').value.trim();
         const password = document.getElementById('password').value;
 
-        const saved = JSON.parse(localStorage.getItem('scentcafeAccount') || 'null');
-        const demo = email === 'customer@scentcafe.com' && password === 'password123';
-        const savedLogin = saved && email === saved.email && password === saved.password;
-
-        if (!demo && !savedLogin) {
-          renderError('Incorrect email or password.');
+        if (!email || !password) {
+          renderError('Please complete all fields.');
           return;
         }
 
-        saveToken('demo-token');
-        localStorage.setItem('scentcafe_session', JSON.stringify({ name: saved ? saved.name : 'Customer', email }));
-        renderHome();
+        try {
+          const data = await apiRequest('/api/login', {
+            method: 'POST',
+            body: JSON.stringify({ email, password })
+          });
+
+          persistSession(data.user, data.token);
+          renderHome();
+        } catch (error) {
+          renderError(error.message || 'Incorrect email or password.');
+        }
       });
 
       document.getElementById('signupBtn').addEventListener('click', () => renderSignup());
@@ -526,26 +195,28 @@
         </div>
       `;
 
-      document.getElementById('createBtn').addEventListener('click', () => {
-        const name = document.getElementById('fullName').value.trim();
+      document.getElementById('createBtn').addEventListener('click', async () => {
+        const firstName = document.getElementById('fullName').value.trim().split(' ')[0] || '';
+        const lastName = document.getElementById('fullName').value.trim().split(' ').slice(1).join(' ') || '';
         const email = document.getElementById('newEmail').value.trim();
         const password = document.getElementById('newPassword').value;
 
-        if (!name || !email || !password) {
+        if (!firstName || !lastName || !email || !password) {
           renderError('Please complete all fields.');
           return;
         }
 
-        saveAccount({
-          name,
-          email,
-          password,
-          emailAlerts: true,
-          smsAlerts: true,
-          preferredCategories: ['government', 'jobs']
-        });
+        try {
+          const data = await apiRequest('/api/signup', {
+            method: 'POST',
+            body: JSON.stringify({ firstName, lastName, email, password })
+          });
 
-        renderLogin();
+          persistSession(data.user, data.token);
+          renderHome();
+        } catch (error) {
+          renderError(error.message || 'Unable to create account.');
+        }
       });
 
       document.getElementById('backBtn').addEventListener('click', renderLogin);
@@ -661,12 +332,12 @@
     }
 
     function renderRequests() {
-      const list = getTickets();
-      const items = list.length ? list.slice().reverse().map((t) => `
+      const fallback = getTickets();
+      const items = fallback.length ? fallback.slice().reverse().map((t) => `
         <div class="request-item">
           <strong>${t.service}</strong>
           <div class="small">${t.number} • ${new Date(t.date).toLocaleString()}</div>
-          <div class="small" style="margin-top:8px;">${t.message}</div>
+          <div class="small" style="margin-top:8px;">${t.message || t.request || ''}</div>
           <span class="status">${t.status}</span>
         </div>
       `).join('') : '<p class="small">No requests yet. Submit your first request below.</p>';
@@ -731,21 +402,33 @@
         });
       });
 
-      document.getElementById('saveProfileBtn').addEventListener('click', () => {
+      document.getElementById('saveProfileBtn').addEventListener('click', async () => {
         const next = getAccount();
         next.name = document.getElementById('profileName').value.trim() || next.name;
         next.email = document.getElementById('profileEmail').value.trim() || next.email;
         next.emailAlerts = document.querySelector('[data-key="emailAlerts"]').classList.contains('on');
         next.smsAlerts = document.querySelector('[data-key="smsAlerts"]').classList.contains('on');
-        saveAccount(next);
 
-        localStorage.setItem('scentcafe_session', JSON.stringify({
-          name: next.name,
-          email: next.email
-        }));
+        try {
+          const data = await apiRequest('/api/profile', {
+            method: 'PUT',
+            body: JSON.stringify({
+              firstName: next.name.split(' ')[0] || next.name,
+              lastName: next.name.split(' ').slice(1).join(' ') || '',
+              email: next.email
+            })
+          });
 
-        addNotification('Profile saved', 'Your account preferences were updated successfully.');
-        renderAccount();
+          saveAccount(next);
+          localStorage.setItem('scentcafe_session', JSON.stringify({
+            name: data.user.name || next.name,
+            email: data.user.email || next.email
+          }));
+          addNotification('Profile saved', 'Your account preferences were updated successfully.');
+          renderAccount();
+        } catch (error) {
+          renderError(error.message || 'Unable to save profile.');
+        }
       });
 
       document.getElementById('logoutBtn').addEventListener('click', () => {
@@ -761,10 +444,9 @@
 
     function openRequest(serviceName) {
       const normalized = typeof serviceName === 'string' ? serviceName : 'General Assistance';
-      const categoryName = getCategoryLabel(normalized.toLowerCase().replace(/\s+/g, ''));
       const mappedService = defaultCategories.some((category) => category.key === normalized)
         ? getCategoryLabel(normalized)
-        : categoryName || normalized;
+        : getCategoryLabel(normalized.toLowerCase().replace(/\s+/g, '')) || normalized;
 
       app.innerHTML = `
         <div class="card">
@@ -791,7 +473,7 @@
 
       document.getElementById('backBtn').addEventListener('click', renderHome);
 
-      document.getElementById('submitRequestBtn').addEventListener('click', () => {
+      document.getElementById('submitRequestBtn').addEventListener('click', async () => {
         const name = document.getElementById('requestName').value.trim();
         const phone = document.getElementById('requestPhone').value.trim();
         const service = document.getElementById('requestService').value.trim() || 'General Assistance';
@@ -802,29 +484,41 @@
           return;
         }
 
-        const list = getTickets();
-        const number = 'SC-' + new Date().getFullYear() + '-' + String(list.length + 1).padStart(4, '0');
+        try {
+          const data = await apiRequest('/api/requests', {
+            method: 'POST',
+            body: JSON.stringify({ name, phone, service, request: message })
+          });
 
-        list.push({
-          number,
-          name,
-          phone,
-          service,
-          message,
-          status: 'Received',
-          date: new Date().toISOString()
-        });
-
-        saveTickets(list);
-        addNotification('Request submitted', `Ticket ${number} was created for ${service}.`);
-        renderRequests();
+          addNotification('Request submitted', `Ticket ${data.ticket.number} was created for ${service}.`);
+          renderRequests();
+        } catch (error) {
+          renderError(error.message || 'Unable to submit request.');
+        }
       });
     }
 
-    function initApp() {
+    async function verifySession() {
       const token = getToken();
+      if (!token) return false;
 
-      if (!token) {
+      try {
+        const data = await apiRequest('/api/session');
+        localStorage.setItem('scentcafe_session', JSON.stringify({
+          name: data.user.name || 'Customer',
+          email: data.user.email || getAccount().email
+        }));
+        return true;
+      } catch (error) {
+        clearSession();
+        return false;
+      }
+    }
+
+    async function initApp() {
+      const sessionValid = await verifySession();
+
+      if (!sessionValid) {
         renderLogin();
         return;
       }
@@ -834,5 +528,3 @@
 
     initApp();
   </script>
-</body>
-</html>
