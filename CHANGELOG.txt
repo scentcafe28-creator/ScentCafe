@@ -1,0 +1,6 @@
+Removed the PWA install/shortcut section and all browser alert popups from the app flow.
+
+Changes:
+- deleted the install card from the home screen
+- removed the alert() calls during signup and request submission
+- kept the app flow functional without the browser popup UI
