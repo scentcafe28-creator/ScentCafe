@@ -545,9 +545,7 @@
           preferredCategories: ['government', 'jobs']
         });
 
-        document.getElementById('email').value = email;
         renderLogin();
-        alert('Account created successfully. You can now sign in.');
       });
 
       document.getElementById('backBtn').addEventListener('click', renderLogin);
@@ -578,16 +576,6 @@
             </div>
             <p class="subtitle">Hello ${user.name || 'there'}! Your digital service centre.</p>
             <button class="primary" id="requestBtn">Make a request</button>
-          </div>
-
-          <div class="install-box">
-            <div class="row">
-              <div class="install-icon">G</div>
-              <div>
-                <div class="install-label">Fast access</div>
-                <div class="install-note">ScentCafe works as a quick-access service dashboard for assistance requests.</div>
-              </div>
-            </div>
           </div>
 
           <div class="notification-box">
@@ -830,7 +818,6 @@
         saveTickets(list);
         addNotification('Request submitted', `Ticket ${number} was created for ${service}.`);
         renderRequests();
-        alert('Request submitted successfully!\n\nTicket number: ' + number);
       });
     }
 
