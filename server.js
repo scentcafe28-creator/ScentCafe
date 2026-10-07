@@ -15,6 +15,10 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static(ROOT_DIR));
 
+function isValidEmail(email) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email).trim().toLowerCase());
+}
+
 function ensureDataFile() {
   if (!fs.existsSync(DATA_DIR)) {
     fs.mkdirSync(DATA_DIR, { recursive: true });
@@ -42,7 +46,30 @@ function ensureDataFile() {
 
 function readStore() {
   ensureDataFile();
-  return JSON.parse(fs.readFileSync(STORE_PATH, 'utf8'));
+
+  try {
+    const raw = fs.readFileSync(STORE_PATH, 'utf8');
+    const parsed = JSON.parse(raw);
+
+    if (!parsed || typeof parsed !== 'object') {
+      throw new Error('Store file is malformed.');
+    }
+
+    if (!Array.isArray(parsed.users)) parsed.users = [];
+    if (!parsed.sessions || typeof parsed.sessions !== 'object') parsed.sessions = {};
+    if (!Array.isArray(parsed.tickets)) parsed.tickets = [];
+
+    return parsed;
+  } catch (error) {
+    const recoveredStore = {
+      users: [],
+      sessions: {},
+      tickets: []
+    };
+
+    fs.writeFileSync(STORE_PATH, JSON.stringify(recoveredStore, null, 2));
+    return recoveredStore;
+  }
 }
 
 function writeStore(store) {
@@ -91,14 +118,20 @@ function getUserByEmail(email) {
 
 function comparePassword(candidate, storedPassword) {
   if (!storedPassword) return false;
+  const normalizedCandidate = String(candidate || '');
+
   if (storedPassword.startsWith('$2')) {
-    return bcrypt.compareSync(candidate, storedPassword);
+    return bcrypt.compareSync(normalizedCandidate, storedPassword);
   }
-  return candidate === storedPassword;
+
+  return normalizedCandidate === storedPassword;
 }
 
 function authMiddleware(req, res, next) {
-  const token = req.headers.authorization?.replace('Bearer ', '');
+  const authHeader = req.headers.authorization || '';
+  const token = authHeader.startsWith('Bearer ')
+    ? authHeader.slice(7).trim()
+    : authHeader.trim();
 
   if (!token) {
     return res.status(401).json({ message: 'Unauthorized' });
@@ -115,6 +148,14 @@ function authMiddleware(req, res, next) {
   next();
 }
 
+function updateSessionUsers(store, oldEmail, updatedUser) {
+  Object.keys(store.sessions).forEach((token) => {
+    if (store.sessions[token].email === oldEmail) {
+      store.sessions[token] = sanitizeUser(updatedUser);
+    }
+  });
+}
+
 app.get('/api/health', (_, res) => {
   res.json({ ok: true, message: 'ScentCafe backend is running' });
 });
@@ -128,11 +169,11 @@ app.post('/api/signup', (req, res) => {
 
   const normalizedEmail = String(email).trim().toLowerCase();
 
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
+  if (!isValidEmail(normalizedEmail)) {
     return res.status(400).json({ message: 'Please enter a valid email address.' });
   }
 
-  if (password.length < 6) {
+  if (String(password).length < 6) {
     return res.status(400).json({ message: 'Password must be at least 6 characters long.' });
   }
 
@@ -190,7 +231,7 @@ app.post('/api/reset-password', (req, res) => {
 
   const normalizedEmail = String(email).trim().toLowerCase();
 
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
+  if (!isValidEmail(normalizedEmail)) {
     return res.status(400).json({ message: 'Please enter a valid email address.' });
   }
 
@@ -224,7 +265,7 @@ app.put('/api/profile', authMiddleware, (req, res) => {
 
   const normalizedEmail = String(email).trim().toLowerCase();
 
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
+  if (!isValidEmail(normalizedEmail)) {
     return res.status(400).json({ message: 'Please enter a valid email address.' });
   }
 
@@ -233,6 +274,14 @@ app.put('/api/profile', authMiddleware, (req, res) => {
 
   if (userIndex === -1) {
     return res.status(404).json({ message: 'User not found.' });
+  }
+
+  const emailTakenByAnotherUser = store.users.some(
+    (user, index) => index !== userIndex && user.email === normalizedEmail
+  );
+
+  if (emailTakenByAnotherUser) {
+    return res.status(409).json({ message: 'An account with this email already exists.' });
   }
 
   const updatedUser = normalizeUser({
@@ -247,12 +296,7 @@ app.put('/api/profile', authMiddleware, (req, res) => {
   store.users[userIndex] = updatedUser;
   const sessionUser = sanitizeUser(updatedUser);
 
-  Object.keys(store.sessions).forEach((token) => {
-    if (store.sessions[token].email === req.user.email) {
-      store.sessions[token] = sessionUser;
-    }
-  });
-
+  updateSessionUsers(store, req.user.email, updatedUser);
   writeStore(store);
 
   res.json({ user: sessionUser });
